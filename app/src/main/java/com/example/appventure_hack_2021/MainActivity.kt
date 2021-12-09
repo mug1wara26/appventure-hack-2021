@@ -25,22 +25,6 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val navView: BottomNavigationView = binding.navView
-
-        val navController = findNavController(R.id.nav_host_fragment_activity_main)
-
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-        val appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.nav_map, R.id.nav_home, R.id.nav_settings
-            )
-        )
-        setupActionBarWithNavController(navController, appBarConfiguration)
-        navView.setupWithNavController(navController)
-
-        navView.selectedItemId = R.id.nav_home
-
         val providers = arrayListOf(
             AuthUI.IdpConfig.GoogleBuilder().build()
         )
@@ -62,15 +46,18 @@ class MainActivity : AppCompatActivity() {
                 val response = IdpResponse.fromResultIntent(data)
 
                 if (resultCode == Activity.RESULT_OK) {
-                    // Successfully signed in
                     val user = FirebaseAuth.getInstance().currentUser
-                    // val usernameTextView: TextView = findViewById(R.id.username)
-                    // usernameTextView.text = user?.displayName
-                    // ...
+                    startNavigation()
                 } else {
                     println(response?.error)
                 }
             }
         }
+    }
+
+    private fun startNavigation() {
+        val intent = Intent(applicationContext, NavigationActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 }
