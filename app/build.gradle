@@ -8,7 +8,7 @@ android {
     buildToolsVersion "30.0.3"
 
     defaultConfig {
-        applicationId "com.example.userauthtemplate"
+        applicationId "com.example.appventure_hack_2021"
         minSdkVersion 26
         targetSdkVersion 30
         versionCode 1
