@@ -39,10 +39,17 @@
 
     <string name="history_cardview_header">History</string>
     <string name="open_history_text">Open History</string>
+    <string name="history_title">History</string>
+    <string name="history_start_stop_text">%1$s to %2$s</string>
+    <string name="history_content_text">
+        Distance Cycled: %1$f km\n
+        On: %2$s from %3$s to %4$s
+    </string>
 
     <string name="current_pos_cardview_header">Current Position</string>
 
     <string name="daily_route_cardview_header">Daily Route</string>
     <string name="start_daily_text">Start Today\'s Route</string>
-    <string name="history_title">History</string>
+
+
 </resources>
