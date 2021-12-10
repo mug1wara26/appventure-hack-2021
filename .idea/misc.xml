@@ -4,6 +4,7 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/Admin/Documents/GitHub/appventure-hack-2021/app/src/main/res/drawable/home_icon.xml" value="0.2703125" />
+        <entry key="..\:/Users/Admin/Documents/GitHub/appventure-hack-2021/app/src/main/res/drawable/ic_baseline_arrow_back_24.xml" value="0.2703125" />
         <entry key="..\:/Users/Admin/Documents/GitHub/appventure-hack-2021/app/src/main/res/drawable/search_icon.xml" value="0.2703125" />
         <entry key="..\:/Users/Admin/Documents/GitHub/appventure-hack-2021/app/src/main/res/layout/activity_login.xml" value="0.13125" />
         <entry key="..\:/Users/Admin/Documents/GitHub/appventure-hack-2021/app/src/main/res/layout/activity_main.xml" value="0.144" />
@@ -15,6 +16,8 @@
         <entry key="..\:/Users/Admin/Documents/GitHub/appventure-hack-2021/app/src/main/res/layout/navigation_activity.xml" value="0.13020833333333334" />
         <entry key="..\:/Users/Admin/Documents/GitHub/appventure-hack-2021/app/src/main/res/layout/new_destination_cardview.xml" value="0.13125" />
         <entry key="..\:/Users/Admin/Documents/GitHub/appventure-hack-2021/app/src/main/res/layouts/home_cardviews/layout/cardview_history.xml" value="0.2509057971014493" />
+        <entry key="..\:/Users/Admin/Documents/GitHub/appventure-hack-2021/app/src/main/res/layouts/home_cardviews/layout/cardview_history_fragment.xml" value="0.2509057971014493" />
+        <entry key="..\:/Users/Admin/Documents/GitHub/appventure-hack-2021/app/src/main/res/layouts/home_cardviews/layout/cardview_history_stats.xml" value="0.2509057971014493" />
         <entry key="..\:/Users/Admin/Documents/GitHub/appventure-hack-2021/app/src/main/res/layouts/home_cardviews/layout/current_pos_cardview.xml" value="0.13125" />
         <entry key="..\:/Users/Admin/Documents/GitHub/appventure-hack-2021/app/src/main/res/layouts/home_cardviews/layout/daily_route_cardview.xml" value="0.13125" />
         <entry key="..\:/Users/Admin/Documents/GitHub/appventure-hack-2021/app/src/main/res/layouts/home_cardviews/layout/history_cardview.xml" value="0.13125" />
