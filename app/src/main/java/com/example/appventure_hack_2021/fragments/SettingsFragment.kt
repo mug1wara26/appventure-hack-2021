@@ -10,13 +10,10 @@ import android.widget.Button
 import android.widget.Spinner
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
-import com.example.appventure_hack_2021.ConfirmDialogFragment
-import com.example.appventure_hack_2021.DatabaseAccessor
 import com.example.appventure_hack_2021.NavigationActivity
 import com.example.appventure_hack_2021.R
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
+import com.example.appventure_hack_2021.user
+import com.example.appventure_hack_2021.userRef
 
 class SettingsFragment : Fragment(), NavigationActivity.OnEnterListener {
     private val modes = listOf(
@@ -43,7 +40,7 @@ class SettingsFragment : Fragment(), NavigationActivity.OnEnterListener {
     ): View {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_settings, container, false)
-        val settingsRef = DatabaseAccessor.instance.userRef.child("settings")
+        val settingsRef = userRef.child("settings")
         view.findViewById<Button>(R.id.set_home_button).setOnClickListener {
 
         }
@@ -51,15 +48,13 @@ class SettingsFragment : Fragment(), NavigationActivity.OnEnterListener {
         difficultySpinner = view.findViewById(R.id.difficulty_spinner)
         difficultySpinner.adapter = ArrayAdapter.createFromResource(
             this.requireContext(),
-            R.array.themes,
+            R.array.difficulties,
             android.R.layout.simple_spinner_item
         ).also { it.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
-        settingsRef.child("difficulty").get().addOnSuccessListener {
-            difficultySpinner.setSelection(it.value as Int)
-        }
+        difficultySpinner.setSelection(user.settings.difficulty_idx)
         difficultySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                settingsRef.child("difficulty").setValue(p2)
+                settingsRef.child("difficulty_idx").setValue(p2)
             }
 
             override fun onNothingSelected(p0: AdapterView<*>?) {
@@ -78,7 +73,7 @@ class SettingsFragment : Fragment(), NavigationActivity.OnEnterListener {
             android.R.layout.simple_spinner_item
         ).also { it.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
 
-        themeSpinner.setSelection(getModeIndex())
+        themeSpinner.setSelection(user.settings.theme_idx)
         // ^ required to not popup on entering settings screen in dark mode, no idea why the
         // call to onEnter above doesn't work, but it doesn't work.
         // the onEnter call doesn't change the selectedItem to 2 but leaves it at 0
@@ -95,6 +90,8 @@ class SettingsFragment : Fragment(), NavigationActivity.OnEnterListener {
                     // setDefaultNightMode reloads view, have to reset to the proper fragment
                     (activity as NavigationActivity).navView.selectedItemId = R.id.nav_home
                     lastIndexTheme = index
+                    settingsRef.child("theme_idx").setValue(lastIndexTheme)
+
                 }
                 dialog.onCancel = {
                     themeSpinner.setSelection(lastIndexTheme)

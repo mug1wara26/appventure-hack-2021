@@ -1,9 +1,10 @@
-package com.example.appventure_hack_2021
+package com.example.appventure_hack_2021.fragments
 
 import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
+import com.example.appventure_hack_2021.R
 
 class ConfirmDialogFragment(private val message_id: Int) : DialogFragment() {
     lateinit var onConfirm: () -> Unit

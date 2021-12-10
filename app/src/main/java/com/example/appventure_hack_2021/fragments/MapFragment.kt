@@ -1,5 +1,6 @@
 package com.example.appventure_hack_2021.fragments
 
+import android.content.Context
 import android.location.Address
 import android.location.Geocoder
 import android.os.Bundle
@@ -9,6 +10,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.AutoCompleteTextView
 import android.widget.ImageButton
 import androidx.appcompat.app.AlertDialog
@@ -23,7 +25,12 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import java.io.IOException
 import android.widget.ArrayAdapter
+import androidx.core.content.ContextCompat
 import com.google.android.gms.maps.model.Marker
+import androidx.core.content.ContextCompat.getSystemService
+
+
+
 
 
 class MapFragment : Fragment(), OnMapReadyCallback {
@@ -92,6 +99,9 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         val searchButton: ImageButton = view.findViewById(R.id.search_layout_search_button)
         searchButton.setOnClickListener {
             if (!addressList.isNullOrEmpty()) {
+                val imm: InputMethodManager? = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+                imm?.hideSoftInputFromWindow(searchButton.windowToken, 0)
+
                 val address = addressList!![0]
                 // on below line we are creating a variable for our location
                 // where we will add our locations latitude and longitude.
