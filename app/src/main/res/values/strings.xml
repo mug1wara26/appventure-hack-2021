@@ -14,13 +14,15 @@
     <string name="title_notifications">Notifications</string>
 
     <string name="set_home_button_text">SET HOME LOCATION</string>
-    <string name="cancel">cancel</string>
-    <string name="ok">ok</string>
+
+    <string name="difficulty_text">Difficulty</string>
+
+
     <string name="confirm_theme_change">Are you sure you wish to change the theme? This will prompt a small restart of the view and bring you back to the home page!</string>
     <string name="search">Search</string>
-    <string-array name="themes">
-        <item>System</item>
-        <item>Light</item>
-        <item>Dark</item>
-    </string-array>
+    <string name="theme_text">"Theme: "</string>
+
+
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
 </resources>
