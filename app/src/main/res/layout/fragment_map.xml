@@ -2,12 +2,10 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".fragments.MapFragment">
-
-    <TextView
+    android:layout_height="match_parent">
+    <fragment
+        android:id="@+id/map"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="map" />
-
+        class="com.google.android.gms.maps.SupportMapFragment" />
 </FrameLayout>

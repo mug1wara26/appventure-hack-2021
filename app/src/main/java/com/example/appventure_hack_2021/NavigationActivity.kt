@@ -6,6 +6,12 @@ import com.example.appventure_hack_2021.databinding.NavigationActivityBinding
 import com.example.appventure_hack_2021.fragments.HomeFragment
 import com.example.appventure_hack_2021.fragments.MapFragment
 import com.example.appventure_hack_2021.fragments.SettingsFragment
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import java.lang.ClassCastException
 
@@ -21,6 +27,7 @@ class NavigationActivity : AppCompatActivity() {
         R.id.nav_settings to SettingsFragment()
     )
     lateinit var navView: BottomNavigationView
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +49,7 @@ class NavigationActivity : AppCompatActivity() {
         try {
             (fragment as OnEnterListener).onEnter()
         } catch (e: ClassCastException) {}
+
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.fragment_container, fragment)
