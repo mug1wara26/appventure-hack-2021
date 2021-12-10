@@ -41,7 +41,8 @@ class MainActivity : AppCompatActivity() {
                 val response = IdpResponse.fromResultIntent(data)
 
                 if (resultCode == Activity.RESULT_OK) {
-                    val user = FirebaseAuth.getInstance().currentUser
+                    // set user
+                    DatabaseAccessor.instance = DatabaseAccessor(FirebaseAuth.getInstance().currentUser!!)
                 } else {
                     println(response?.error)
                 }

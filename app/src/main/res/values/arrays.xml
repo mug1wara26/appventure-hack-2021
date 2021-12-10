@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer-array name="distances">
+        <item>1</item>
+        <item>5</item>
+        <item>10</item>
+        <item>15</item>
+    </integer-array>
+    <!-- The above and below should be synced in regards to values -->
+    <string-array name="difficulties">
+        <item>Beginner (1 – 5 km)</item>
+        <item>Experienced (5 – 10 km)</item>
+        <item>Professional (10 – 15 km)</item>
+    </string-array>
+
+    <string-array name="themes">
+        <item>System</item>
+        <item>Light</item>
+        <item>Dark</item>
+    </string-array>
+</resources>
