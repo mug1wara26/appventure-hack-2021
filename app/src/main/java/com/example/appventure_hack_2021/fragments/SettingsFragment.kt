@@ -10,13 +10,9 @@ import android.widget.Button
 import android.widget.Spinner
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
-import com.example.appventure_hack_2021.ConfirmDialogFragment
-import com.example.appventure_hack_2021.DatabaseAccessor
+import com.example.appventure_hack_2021.model.DatabaseAccessor
 import com.example.appventure_hack_2021.NavigationActivity
 import com.example.appventure_hack_2021.R
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
 
 class SettingsFragment : Fragment(), NavigationActivity.OnEnterListener {
     private val modes = listOf(
@@ -54,12 +50,12 @@ class SettingsFragment : Fragment(), NavigationActivity.OnEnterListener {
             R.array.themes,
             android.R.layout.simple_spinner_item
         ).also { it.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
-        settingsRef.child("difficulty").get().addOnSuccessListener {
+        settingsRef.child("difficulty_idx").get().addOnSuccessListener {
             difficultySpinner.setSelection(it.value as Int)
         }
         difficultySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                settingsRef.child("difficulty").setValue(p2)
+                settingsRef.child("difficulty_idx").setValue(p2)
             }
 
             override fun onNothingSelected(p0: AdapterView<*>?) {

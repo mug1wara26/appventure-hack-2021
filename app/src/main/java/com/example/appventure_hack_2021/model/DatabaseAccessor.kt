@@ -1,4 +1,4 @@
-package com.example.appventure_hack_2021
+package com.example.appventure_hack_2021.model
 
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.ktx.database

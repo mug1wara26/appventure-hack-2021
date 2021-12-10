@@ -9,7 +9,7 @@
 
     <string name="test">Test</string>
 
-    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_main"></string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
 
@@ -17,12 +17,20 @@
 
     <string name="difficulty_text">Difficulty</string>
 
-
-    <string name="confirm_theme_change">Are you sure you wish to change the theme? This will prompt a small restart of the view and bring you back to the home page!</string>
+    <string name="confirm_theme_change">
+        Are you sure you wish to change the theme?
+        This will prompt a small restart of the view and bring you back to the home page!
+    </string>
     <string name="search">Search</string>
     <string name="theme_text">"Theme: "</string>
 
-
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
+
+
+    <string name="new_dest_text">New Destination</string>
+    <string name="new_dest_cardview_header">New Destination</string>
+    <string name="history_cardview_header">History</string>
+    <string name="home_greeting">Hello, %1$s</string>
+    <string name="current_pos_cardview_header">Current Position</string>
 </resources>
