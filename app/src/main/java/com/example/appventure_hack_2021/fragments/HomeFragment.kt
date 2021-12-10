@@ -1,10 +1,10 @@
 package com.example.appventure_hack_2021.fragments
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import com.example.appventure_hack_2021.R
 
 class HomeFragment : Fragment() {
