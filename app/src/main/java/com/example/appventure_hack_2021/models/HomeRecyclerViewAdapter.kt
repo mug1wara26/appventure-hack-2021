@@ -1,4 +1,4 @@
-package com.example.appventure_hack_2021.model
+package com.example.appventure_hack_2021.models
 
 import android.view.LayoutInflater
 import android.view.View

@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/cardview_height"
-    android:layout_margin="@dimen/margin">
+    android:layout_margin="@dimen/margin"
+    app:cardCornerRadius="@dimen/corner_radius" >
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -13,35 +15,37 @@
             android:id="@+id/header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/white"
             android:background="@color/cardview_dark_background"
+            android:paddingLeft="@dimen/margin"
             android:paddingTop="@dimen/margin_small"
             android:paddingBottom="@dimen/margin_small"
-            android:paddingLeft="@dimen/margin"
-            app:layout_constraintTop_toTopOf="parent"
+            android:text="@string/history_cardview_header"
+            android:textColor="@color/white"
             android:textSize="@dimen/text_large"
-            android:text="@string/new_dest_cardview_header" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:layout_editor_absoluteX="-173dp" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin"
+            android:textSize="@dimen/text"
+            app:layout_constraintTop_toBottomOf="@+id/header"
+            tools:layout_editor_absoluteX="24dp" />
 
         <Button
-            android:id="@+id/new_dest_button"
+            android:id="@+id/open_history_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/margin"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/header"
+            app:layout_constraintTop_toBottomOf="@+id/textView"
             android:textSize="@dimen/text"
-            android:text="@string/new_dest_text" />
+            android:text="@string/open_history_text"/>
 
-        <Button
-            android:id="@+id/_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/new_dest_button"
-            android:textSize="@dimen/text"
-            android:text="" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </com.google.android.material.card.MaterialCardView>

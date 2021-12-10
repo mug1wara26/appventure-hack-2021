@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import com.example.appventure_hack_2021.NavigationActivity
 import com.example.appventure_hack_2021.R
+import com.example.appventure_hack_2021.models.History
 import com.example.appventure_hack_2021.user
 import com.example.appventure_hack_2021.userRef
 
@@ -105,6 +106,13 @@ class SettingsFragment : Fragment(), NavigationActivity.OnEnterListener {
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_UNSPECIFIED)
+            }
+        }
+
+        view.findViewById<Button>(R.id.clear_history_button).setOnClickListener {
+            val dialog = ConfirmDialogFragment(R.string.confirm_clear_history)
+            dialog.onConfirm = {
+                userRef.child("history").setValue(listOf<History>())
             }
         }
         return view

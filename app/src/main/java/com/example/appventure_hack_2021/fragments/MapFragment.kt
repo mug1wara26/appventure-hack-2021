@@ -13,8 +13,6 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.AutoCompleteTextView
 import android.widget.ImageButton
-import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import com.example.appventure_hack_2021.R
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -25,22 +23,12 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import java.io.IOException
 import android.widget.ArrayAdapter
-import androidx.core.content.ContextCompat
 import com.google.android.gms.maps.model.Marker
-import androidx.core.content.ContextCompat.getSystemService
-
-
-
-
 
 class MapFragment : Fragment(), OnMapReadyCallback {
-
+    private lateinit var autoCompleteTextView: AutoCompleteTextView
     private lateinit var mMap: GoogleMap
     private lateinit var marker: Marker
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -53,12 +41,12 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
         var addressList: List<Address>? = null
 
-        val autoCompleteTextView: AutoCompleteTextView = view.findViewById(R.id.input_search)
+        autoCompleteTextView = view.findViewById(R.id.input_search)
 
-        val addressNameArrayList = ArrayList<String>()
+        var addressNameArrayList: List<String> = ArrayList()
         autoCompleteTextView.addTextChangedListener(object: TextWatcher {
-
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+
             override fun afterTextChanged(p0: Editable?) {
                 val adapter: ArrayAdapter<String> = ArrayAdapter<String>(
                     requireContext(),
@@ -66,7 +54,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                     addressNameArrayList
                 )
                 autoCompleteTextView.setAdapter(adapter)
-
                 autoCompleteTextView.showDropDown()
             }
 
@@ -81,19 +68,14 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                     // on below line we are getting location from the
                     // location name and adding that location to address list.
                     addressList = geocoder.getFromLocationName(location, 1)
-
-                    addressNameArrayList.removeAll(addressNameArrayList)
-                    (addressList as MutableList<Address>?)?.forEach {
-                        addressNameArrayList.add(it.getAddressLine(0))
+                    if (addressList != null) {
+                        addressNameArrayList = (addressList as List<Address>).map { it.getAddressLine(0) }
                     }
-
                     Log.i("addressList", addressNameArrayList.toString())
-
                 } catch (e: IOException) {
                     e.printStackTrace()
                 }
             }
-
         })
 
         val searchButton: ImageButton = view.findViewById(R.id.search_layout_search_button)
@@ -131,5 +113,12 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 .position(sydney)
                 .title("Marker in Sydney"))!!
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+    }
+
+    fun focusSearch() {
+        // focus on the search bar
+        autoCompleteTextView.requestFocus()
+        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.showSoftInput(autoCompleteTextView, InputMethodManager.SHOW_IMPLICIT)
     }
 }

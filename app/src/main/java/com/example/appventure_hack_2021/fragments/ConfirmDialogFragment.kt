@@ -7,8 +7,8 @@ import androidx.fragment.app.DialogFragment
 import com.example.appventure_hack_2021.R
 
 class ConfirmDialogFragment(private val message_id: Int) : DialogFragment() {
-    lateinit var onConfirm: () -> Unit
-    lateinit var onCancel: () -> Unit
+    var onConfirm: () -> Unit = {}
+    var onCancel: () -> Unit = {}
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
             // Use the Builder class for convenient dialog construction
