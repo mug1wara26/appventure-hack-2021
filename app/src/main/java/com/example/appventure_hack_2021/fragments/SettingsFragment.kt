@@ -51,10 +51,13 @@ class SettingsFragment : Fragment(), NavigationActivity.OnEnterListener {
             R.array.difficulties,
             android.R.layout.simple_spinner_item
         ).also { it.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
+
         difficultySpinner.setSelection(user.settings.difficulty_idx)
+
         difficultySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
                 settingsRef.child("difficulty_idx").setValue(p2)
+                difficultySpinner.setSelection(p2)
             }
 
             override fun onNothingSelected(p0: AdapterView<*>?) {
