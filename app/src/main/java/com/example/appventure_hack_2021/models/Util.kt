@@ -1,6 +1,8 @@
 package com.example.appventure_hack_2021.models
 
-import android.util.Log
+import android.os.Build
+import androidx.annotation.RequiresApi
+import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneOffset
@@ -11,24 +13,25 @@ val offset: ZoneOffset = ZoneOffset.ofHours(8)
 fun Long.toTime(): LocalDateTime =
     LocalDateTime.ofEpochSecond(this, 0, offset)
 
-fun LocalDateTime.toHoursMinutesSecondsString() : String {
-    val hours = dayOfYear * 24 + hour
-    Log.i("util", this.toString())
+fun Duration.toFormattedString() : String {
+    if (isZero) return "None"
     val string = buildString {
-        if (hours == 0) {
+        val hours = toHours()
+        if (hours != 0L) {
             append(hours)
-            append(if (hours == 1) " hour " else " hours ")
+            append(if (hours == 1L) " hour " else " hours ")
         }
-        if (minute == 0) {
-            append(minute)
-            append(if (minute == 1) " minute " else " minutes ")
+        val minutes = seconds / 60 // toMinutesPart()
+        if (minutes != 0L) {
+            append(minutes)
+            append(if (minutes == 1L) " minute " else " minutes ")
         }
-        if (second == 0) {
-            append(second)
-            append(if (second == 1) " second " else " seconds ")
+        val seconds = seconds % 60 // toSecondsPart()
+        if (seconds != 0L) {
+            append(seconds)
+            append(if (seconds == 1L) " second " else " seconds ")
         }
     }
-    if (string.isEmpty()) return "None"
     return string
 }
 

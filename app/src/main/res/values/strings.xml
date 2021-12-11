@@ -52,7 +52,7 @@
     <!-- History Fragment Strings -->
     <string name="history_stats_title">Overall Statistics</string>
     <string name="history_stats_text">
-        Total Trips: %1$d \nTotal Distance Cycled: %2$f km \nTotal Time Spent: %3$s
+        Total Trips: %1$d \nTotal Distance Cycled: %2$.2f km \nTotal Time Spent: %3$s
     </string>
 
     <string name="history">History</string>

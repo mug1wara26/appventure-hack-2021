@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.appventure_hack_2021.R
 import com.example.appventure_hack_2021.fragments.AddFavouriteDialogFragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import java.time.Duration
 
 private const val stats_id = 0
 class HistoryRecyclerViewAdapter(
@@ -19,12 +20,11 @@ class HistoryRecyclerViewAdapter(
 ) : RecyclerView.Adapter<HistoryRecyclerViewAdapter.ViewHolder>()  {
     class ViewHolder(private val view: View, private val context: Context) : RecyclerView.ViewHolder(view) {
         fun bindStats(histories: List<History>) {
-            val timeSpent = histories.sumOf { it.startTime - it.endTime }.toTime().toHoursMinutesSecondsString()
             view.findViewById<TextView>(R.id.content).text = context.getString(
                 R.string.history_stats_text,
                 histories.size,
                 histories.sumOf { it.totalDistance.toDouble() },
-                timeSpent
+                Duration.ofSeconds(histories.sumOf { it.startTime - it.endTime }).toFormattedString()
             )
             return
         }
@@ -42,7 +42,7 @@ class HistoryRecyclerViewAdapter(
                 R.string.history_content_text,
                 history.totalDistance,
                 fromStartToEndString(history.startTime.toTime(), history.endTime.toTime()),
-                (history.startTime - history.endTime).toTime().toHoursMinutesSecondsString()
+                Duration.ofSeconds(history.startTime - history.endTime).toFormattedString()
             )
         }
     }

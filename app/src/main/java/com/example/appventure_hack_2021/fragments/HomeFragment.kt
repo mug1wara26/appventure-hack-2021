@@ -12,11 +12,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.appventure_hack_2021.NavigationActivity
 import com.example.appventure_hack_2021.R
 import com.example.appventure_hack_2021.firebaseUser
-import com.example.appventure_hack_2021.models.HomeRecyclerViewAdapter
-import com.example.appventure_hack_2021.models.fromStartToEndString
-import com.example.appventure_hack_2021.models.toHoursMinutesSecondsString
-import com.example.appventure_hack_2021.models.toTime
+import com.example.appventure_hack_2021.models.*
 import com.example.appventure_hack_2021.user
+import java.time.Duration
 
 class HomeFragment : Fragment() {
     override fun onCreateView(
@@ -60,7 +58,7 @@ class HomeFragment : Fragment() {
                             R.string.history_latest_text,
                             lastHistory.totalDistance,
                             fromStartToEndString(lastHistory.startTime.toTime(), lastHistory.endTime.toTime()),
-                            (lastHistory.startTime - lastHistory.endTime).toTime().toHoursMinutesSecondsString()
+                            Duration.ofSeconds(lastHistory.startTime - lastHistory.endTime).toFormattedString()
                         )
                     }
                     it.view.findViewById<Button>(R.id.open_history_button).setOnClickListener {
