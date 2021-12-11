@@ -28,7 +28,7 @@ class HistoryFragment : Fragment() {
 
         view.findViewById<RecyclerView>(R.id.history_recycler_view).apply {
             layoutManager = LinearLayoutManager(context)
-            adapter = HistoryRecyclerViewAdapter(user.historyList, context)
+            adapter = HistoryRecyclerViewAdapter(user.historyList, context, childFragmentManager)
         }
 
         return view

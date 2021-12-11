@@ -93,7 +93,7 @@ class SettingsFragment : Fragment(), NavigationActivity.OnEnterListener {
                     themeSpinner.setSelection(lastIndexTheme)
                     // lastIndexTheme = index
                 }
-                dialog.show(childFragmentManager, "ConfirmDialogFragment")
+                dialog.show(childFragmentManager, "ThemeConfirmDialogFragment")
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -106,6 +106,7 @@ class SettingsFragment : Fragment(), NavigationActivity.OnEnterListener {
             dialog.onConfirm = {
                 userRef.child("history").setValue(listOf<History>())
             }
+            dialog.show(childFragmentManager, "ClearHistoryConfirmDialogFragment")
         }
         return view
     }

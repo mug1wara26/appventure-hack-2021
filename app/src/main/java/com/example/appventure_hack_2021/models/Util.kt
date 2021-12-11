@@ -1,7 +1,6 @@
 package com.example.appventure_hack_2021.models
 
-import android.widget.TextView
-import com.example.appventure_hack_2021.R
+import android.util.Log
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneOffset
@@ -13,10 +12,24 @@ fun Long.toTime(): LocalDateTime =
     LocalDateTime.ofEpochSecond(this, 0, offset)
 
 fun LocalDateTime.toHoursMinutesSecondsString() : String {
-    val hours = this.dayOfYear * 24 + this.hour
-    return (if (hours == 0) "" else "$hours hours ") +
-            (if (this.minute == 0) "" else "${this.minute} minutes ") +
-            "${this.second} this"
+    val hours = dayOfYear * 24 + hour
+    Log.i("util", this.toString())
+    val string = buildString {
+        if (hours == 0) {
+            append(hours)
+            append(if (hours == 1) " hour " else " hours ")
+        }
+        if (minute == 0) {
+            append(minute)
+            append(if (minute == 1) " minute " else " minutes ")
+        }
+        if (second == 0) {
+            append(second)
+            append(if (second == 1) " second " else " seconds ")
+        }
+    }
+    if (string.isEmpty()) return "None"
+    return string
 }
 
 fun fromStartToEndString(start: LocalDateTime, end: LocalDateTime) : String {

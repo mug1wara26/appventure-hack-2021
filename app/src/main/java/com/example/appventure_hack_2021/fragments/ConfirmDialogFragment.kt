@@ -14,10 +14,11 @@ class ConfirmDialogFragment(private val message_id: Int) : DialogFragment() {
             // Use the Builder class for convenient dialog construction
             AlertDialog.Builder(it).apply {
                 setMessage(message_id)
-                setPositiveButton(R.string.ok) { _, _ ->
+
+                setPositiveButton(android.R.string.ok) { _, _ ->
                     onConfirm()
                 }
-                setNegativeButton(R.string.cancel) { _, _ ->
+                setNegativeButton(android.R.string.cancel) { _, _ ->
                     onCancel()
                 }
             }.create()

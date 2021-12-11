@@ -65,7 +65,7 @@ class HomeFragment : Fragment() {
                     }
                     it.view.findViewById<Button>(R.id.open_history_button).setOnClickListener {
                         // open history fragment
-                        (activity as NavigationActivity).replaceFragment(R.id.nav_history)
+                        (activity as NavigationActivity).navView.selectedItemId = R.id.nav_history
                     }
                 },
                 Pair(R.layout.cardview_daily_route) {

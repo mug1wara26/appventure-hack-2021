@@ -27,24 +27,19 @@ fun refreshUser() {
         user = it.getValue(User::class.java)!!
     }
 }
-
-var shouldStartNavigation = false
+var login_complete = false
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.i("MainActivity", "onCreate Called")
-        if (shouldStartNavigation) {
-            startNavigation()
-            return
-        }
-
+        Log.i("MainActivity", "onCreate Called, $login_complete")
+        if (login_complete) return
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         // Choose authentication providers
-        val providers = arrayListOf(
+        val providers = listOf(
             AuthUI.IdpConfig.GoogleBuilder().build(),
             AuthUI.IdpConfig.EmailBuilder().setRequireName(false).build()
         )
@@ -62,22 +57,9 @@ class MainActivity : AppCompatActivity() {
                 if (firebaseUserOrNull != null) {
                     firebaseUser = firebaseUserOrNull
                     userRef = database.child("users/${firebaseUser.uid}")
-                    userRef.get().addOnSuccessListener {
-                        // Check if user exists
-                        if (!it.exists()) {
-                            user = User(firebaseUser.uid)
-                            userRef.setValue(user)
-                        } else user = it.getValue(User::class.java)!!
-
-                        Log.i("user", user.toString())
-
-                        shouldStartNavigation = true
-                        // will restart activity
-                        AppCompatDelegate.setDefaultNightMode(modes[user.settings.theme_idx])
-                        startNavigation()
-                    }
+                    login_complete = true
                 } else {
-                    Log.e("Login", "Despite activity success, firebaseUser is null")
+                    Log.e("MainActivity Login", "Despite activity success, firebaseUser is null")
                 }
             } else {
                 println(response?.error)
@@ -87,10 +69,31 @@ class MainActivity : AppCompatActivity() {
             .setIsSmartLockEnabled(false)
             .setAvailableProviders(providers)
             .build())
+
+        Log.i("MainActivity", "onCreate end")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.i("MainActivity", "onResume called $login_complete")
+        if (login_complete) {
+            userRef.get().addOnSuccessListener {
+                // Check if user exists
+                if (!it.exists()) {
+                    user = User(firebaseUser.uid)
+                    userRef.setValue(user)
+                } else user = it.getValue(User::class.java)!!
+
+                Log.i("user", user.toString())
+
+                startNavigation()
+            }
+        }
     }
 
     private fun startNavigation() {
         Log.i("MainActivity", "starting NavigationActivity")
+        AppCompatDelegate.setDefaultNightMode(modes[user.settings.theme_idx])
         val intent = Intent(applicationContext, NavigationActivity::class.java)
         startActivity(intent)
         // shouldStartNavigation = false
