@@ -11,8 +11,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appventure_hack_2021.NavigationActivity
 import com.example.appventure_hack_2021.R
-import com.example.appventure_hack_2021.model.DatabaseAccessor
-import com.example.appventure_hack_2021.model.HomeRecyclerViewAdapter
+import com.example.appventure_hack_2021.firebaseUser
+import com.example.appventure_hack_2021.models.HomeRecyclerViewAdapter
 
 class HomeFragment : Fragment() {
     override fun onCreateView(
@@ -21,28 +21,38 @@ class HomeFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_home, container, false)
-        // view.findViewById<TextView>(R.id.title).text = getString(
-        //    R.string.home_greeting, DatabaseAccessor.instance.user.displayName
-        // )
+
+        view.findViewById<TextView>(R.id.title).text = getString(
+            R.string.home_greeting, firebaseUser.displayName
+        )
+
         val onRoute = true
         view.findViewById<RecyclerView>(R.id.home_recycler_view).apply {
             layoutManager = LinearLayoutManager(context)
             // decide which cardview is the first elem
             val first: Pair<Int, (HomeRecyclerViewAdapter.ViewHolder) -> Unit> = if (onRoute) {
-                Pair(R.layout.new_destination_cardview) {
+                Pair(R.layout.cardview_new_destination) {
                     it.view.findViewById<Button>(R.id.new_dest_button).setOnClickListener {
-                        (activity as NavigationActivity).navView.selectedItemId = R.id.nav_map
+                        val parent = (activity as NavigationActivity)
+                        parent.navView.selectedItemId = R.id.nav_map
+                        (parent.fragments[R.id.nav_map] as MapFragment).focusSearch()
                     }
                     // it.view.findViewById<Button>(R.id.) {}
                 }
             } else {
-                Pair(R.layout.current_pos_cardview) {
+                Pair(R.layout.cardview_current_pos) {
 
                 }
             }
             adapter = HomeRecyclerViewAdapter(listOf(
                 first,
-                Pair(R.layout.history_cardview) {
+                Pair(R.layout.cardview_history) {
+                    it.view.findViewById<Button>(R.id.open_history_button).setOnClickListener {
+                        // open history fragment
+                        (activity as NavigationActivity).replaceFragment(R.id.nav_history)
+                    }
+                },
+                Pair(R.layout.cardview_daily_route) {
 
                 }
             ))
