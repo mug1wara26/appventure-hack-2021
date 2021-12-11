@@ -56,4 +56,5 @@
 
     <string name="daily_route_cardview_header">Daily Route</string>
     <string name="start_daily_text">Start Today\'s Route</string>
+    <string name="history">History</string>
 </resources>
