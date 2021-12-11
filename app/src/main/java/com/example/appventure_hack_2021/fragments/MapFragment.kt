@@ -29,6 +29,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     private lateinit var autoCompleteTextView: AutoCompleteTextView
     private lateinit var mMap: GoogleMap
     private lateinit var marker: Marker
+    private var toFocus = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -100,6 +101,11 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
         mapFragment.getMapAsync(this)
 
+        if (toFocus) {
+            toFocus = false
+            focusSearchWithContext(requireContext())
+        }
+
         return view
     }
 
@@ -116,9 +122,16 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     }
 
     fun focusSearch() {
-        // focus on the search bar
+        if (context == null) {
+            toFocus = true
+        } else {
+            focusSearchWithContext(requireContext())
+        }
+    }
+
+    private fun focusSearchWithContext(context: Context) {
         autoCompleteTextView.requestFocus()
-        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.showSoftInput(autoCompleteTextView, InputMethodManager.SHOW_IMPLICIT)
     }
 }

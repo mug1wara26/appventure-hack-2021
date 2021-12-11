@@ -5,7 +5,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import com.example.appventure_hack_2021.databinding.ActivityMainBinding
+import com.example.appventure_hack_2021.fragments.modes
 import com.example.appventure_hack_2021.models.User
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
@@ -19,6 +21,11 @@ lateinit var firebaseUser: FirebaseUser
 lateinit var userRef: DatabaseReference
 lateinit var user: User
 
+fun refreshUser() {
+    userRef.get().addOnSuccessListener {
+        user = it.getValue(User::class.java)!!
+    }
+}
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -56,10 +63,10 @@ class MainActivity : AppCompatActivity() {
                 if (resultCode == Activity.RESULT_OK) {
                     val firebaseUserOrNull = FirebaseAuth.getInstance().currentUser
 
-                    if(firebaseUserOrNull != null) {
+                    if (firebaseUserOrNull != null) {
                         firebaseUser = firebaseUserOrNull
                         userRef = database.child("users/${firebaseUser.uid}")
-                        database.child("users/${firebaseUser.uid}").get().addOnSuccessListener {
+                        userRef.get().addOnSuccessListener {
                             // Check if user exists
                             if (!it.exists()) {
                                 user = User(firebaseUser.uid)
@@ -68,9 +75,12 @@ class MainActivity : AppCompatActivity() {
                             else user = it.getValue(User::class.java)!!
 
                             Log.i("user", user.toString())
-                        }
 
-                    startNavigation()
+                            AppCompatDelegate.setDefaultNightMode(modes[user.settings.theme_idx])
+                            startNavigation()
+                        }
+                    } else {
+                        Log.e("Login", "Despite activity success, firebaseUser is null")
                     }
                 } else {
                     println(response?.error)

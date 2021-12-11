@@ -13,6 +13,10 @@ import com.example.appventure_hack_2021.NavigationActivity
 import com.example.appventure_hack_2021.R
 import com.example.appventure_hack_2021.firebaseUser
 import com.example.appventure_hack_2021.models.HomeRecyclerViewAdapter
+import com.example.appventure_hack_2021.models.fromStartToEndString
+import com.example.appventure_hack_2021.models.toHoursMinutesSecondsString
+import com.example.appventure_hack_2021.models.toTime
+import com.example.appventure_hack_2021.user
 
 class HomeFragment : Fragment() {
     override fun onCreateView(
@@ -47,6 +51,18 @@ class HomeFragment : Fragment() {
             adapter = HomeRecyclerViewAdapter(listOf(
                 first,
                 Pair(R.layout.cardview_history) {
+                    val lastHistory = user.historyList.lastOrNull()
+                    if (lastHistory == null) {
+                        it.view.findViewById<TextView>(R.id.history_latest_view).text =
+                            getString(R.string.history_no_latest_text)
+                    } else {
+                        it.view.findViewById<TextView>(R.id.history_latest_view).text = getString(
+                            R.string.history_latest_text,
+                            lastHistory.totalDistance,
+                            fromStartToEndString(lastHistory.startTime.toTime(), lastHistory.endTime.toTime()),
+                            (lastHistory.startTime - lastHistory.endTime).toTime().toHoursMinutesSecondsString()
+                        )
+                    }
                     it.view.findViewById<Button>(R.id.open_history_button).setOnClickListener {
                         // open history fragment
                         (activity as NavigationActivity).replaceFragment(R.id.nav_history)

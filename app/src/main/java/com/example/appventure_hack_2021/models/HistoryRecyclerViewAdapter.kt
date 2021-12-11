@@ -7,24 +7,19 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appventure_hack_2021.R
-import java.time.LocalDateTime
-import java.time.ZoneOffset
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 private const val stats_id = 0
 class HistoryRecyclerViewAdapter(private val histories: List<History>, private val context: Context) : RecyclerView.Adapter<HistoryRecyclerViewAdapter.ViewHolder>()  {
     class ViewHolder(private val view: View, private val context: Context) : RecyclerView.ViewHolder(view) {
         fun bindStats(histories: List<History>) {
-            val offset = ZoneOffset.ofHours(context.resources.getInteger(R.integer.tz_offset))
-            val formatter = DateTimeFormatter.ofPattern("")
+            val timeSpent = histories.sumOf { it.startTime - it.endTime }.toTime().toHoursMinutesSecondsString()
             view.findViewById<TextView>(R.id.content).text = context.getString(
                 R.string.history_stats_text,
                 histories.size,
                 histories.sumOf { it.totalDistance.toDouble() },
-                LocalDateTime.ofEpochSecond(
-                    histories.sumOf { it.startTime - it.endTime } * 1000,
-                    0, offset
-                ).format(formatter)
+                timeSpent
             )
             return
         }
@@ -32,19 +27,12 @@ class HistoryRecyclerViewAdapter(private val histories: List<History>, private v
             view.findViewById<TextView>(R.id.header).text = context.getString(
                 R.string.history_start_stop_text, history.startName, history.startName
             )
-            val offset = ZoneOffset.ofHours(context.resources.getInteger(R.integer.tz_offset))
-            val now = LocalDateTime.now(offset)
-            val startTime = LocalDateTime.ofEpochSecond(history.startTime * 1000, 0, offset)
-            val endTime = LocalDateTime.ofEpochSecond(history.endTime * 1000, 0, offset)
-            val firstFormatter = DateTimeFormatter.ofPattern(if (now.year == startTime.year) { "d MMM" } else { "d MMM yyyy" })
-            val secondFormatter = DateTimeFormatter.ofPattern("h:mm aa")
-            val additional = if (startTime.dayOfMonth == endTime.dayOfMonth) { "" } else { "of the next day" }
+
             view.findViewById<TextView>(R.id.content).text = context.getString(
                 R.string.history_content_text,
                 history.totalDistance,
-                startTime.format(firstFormatter),
-                startTime.format(secondFormatter),
-                endTime.format(secondFormatter) + additional
+                fromStartToEndString(history.startTime.toTime(), history.endTime.toTime()),
+                (history.startTime - history.endTime).toTime().toHoursMinutesSecondsString()
             )
         }
     }

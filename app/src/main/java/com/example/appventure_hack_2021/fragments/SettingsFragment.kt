@@ -10,19 +10,16 @@ import android.widget.Button
 import android.widget.Spinner
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
-import com.example.appventure_hack_2021.NavigationActivity
-import com.example.appventure_hack_2021.R
+import com.example.appventure_hack_2021.*
 import com.example.appventure_hack_2021.models.History
-import com.example.appventure_hack_2021.user
-import com.example.appventure_hack_2021.userRef
 
+val modes = listOf(
+    AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM,
+    AppCompatDelegate.MODE_NIGHT_NO,
+    AppCompatDelegate.MODE_NIGHT_YES,
+    AppCompatDelegate.MODE_NIGHT_UNSPECIFIED
+)
 class SettingsFragment : Fragment(), NavigationActivity.OnEnterListener {
-    private val modes = listOf(
-        AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM,
-        AppCompatDelegate.MODE_NIGHT_NO,
-        AppCompatDelegate.MODE_NIGHT_YES,
-        AppCompatDelegate.MODE_NIGHT_UNSPECIFIED
-    )
     private var initialised = false
 
     private var lastIndexTheme = 0
@@ -43,7 +40,7 @@ class SettingsFragment : Fragment(), NavigationActivity.OnEnterListener {
         val view = inflater.inflate(R.layout.fragment_settings, container, false)
         val settingsRef = userRef.child("settings")
         view.findViewById<Button>(R.id.set_home_button).setOnClickListener {
-
+            // TODO: set home location
         }
 
         difficultySpinner = view.findViewById(R.id.difficulty_spinner)
@@ -56,17 +53,13 @@ class SettingsFragment : Fragment(), NavigationActivity.OnEnterListener {
         difficultySpinner.setSelection(user.settings.difficulty_idx)
 
         difficultySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                settingsRef.child("difficulty_idx").setValue(p2)
-                difficultySpinner.setSelection(p2)
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, index: Int, id: Long) {
+                settingsRef.child("difficulty_idx").setValue(index)
+                refreshUser()
             }
 
-            override fun onNothingSelected(p0: AdapterView<*>?) {
-
-            }
-
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
-
 
         themeSpinner = view.findViewById(R.id.theme_spinner)
         initialised = true
@@ -94,12 +87,11 @@ class SettingsFragment : Fragment(), NavigationActivity.OnEnterListener {
                     // setDefaultNightMode reloads view, have to reset to the proper fragment
                     (activity as NavigationActivity).navView.selectedItemId = R.id.nav_home
                     lastIndexTheme = index
-                    settingsRef.child("theme_idx").setValue(lastIndexTheme)
-
+                    settingsRef.child("theme_idx").setValue(index)
                 }
                 dialog.onCancel = {
                     themeSpinner.setSelection(lastIndexTheme)
-                    lastIndexTheme = index
+                    // lastIndexTheme = index
                 }
                 dialog.show(childFragmentManager, "ConfirmDialogFragment")
             }

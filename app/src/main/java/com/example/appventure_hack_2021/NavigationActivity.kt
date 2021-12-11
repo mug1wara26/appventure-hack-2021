@@ -14,13 +14,15 @@ class NavigationActivity : AppCompatActivity() {
     interface OnEnterListener {
         fun onEnter()
     }
-    private lateinit var binding: ActivityNavigationBinding
+
     val fragments = mapOf(
         R.id.nav_map to MapFragment(),
         R.id.nav_home to HomeFragment(),
         R.id.nav_settings to SettingsFragment(),
         R.id.nav_history to HistoryFragment()
     )
+
+    private lateinit var binding: ActivityNavigationBinding
     lateinit var navView: BottomNavigationView
 
 
@@ -31,7 +33,7 @@ class NavigationActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         navView = binding.navView
-        navView.setOnNavigationItemSelectedListener {
+        navView.setOnItemSelectedListener {
             replaceFragment(it.itemId)
             true
         }
