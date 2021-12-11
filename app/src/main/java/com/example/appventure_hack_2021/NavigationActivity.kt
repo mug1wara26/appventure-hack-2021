@@ -2,11 +2,9 @@ package com.example.appventure_hack_2021
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import com.example.appventure_hack_2021.databinding.ActivityNavigationBinding
-import com.example.appventure_hack_2021.fragments.HistoryFragment
-import com.example.appventure_hack_2021.fragments.HomeFragment
-import com.example.appventure_hack_2021.fragments.MapFragment
-import com.example.appventure_hack_2021.fragments.SettingsFragment
+import com.example.appventure_hack_2021.fragments.*
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
@@ -24,7 +22,6 @@ class NavigationActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityNavigationBinding
     lateinit var navView: BottomNavigationView
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
