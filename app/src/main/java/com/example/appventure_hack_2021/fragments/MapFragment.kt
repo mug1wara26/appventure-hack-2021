@@ -221,7 +221,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 distance
             )
 
-            userRef.child("settings").child("history").push().setValue(history)
+            userRef.child("historyList").push().setValue(history)
         }
 
         view.findViewById<FloatingActionButton>(R.id.map_add_favourite_button).setOnClickListener {
@@ -349,11 +349,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                             )
                         )
 
-                        marker = mMap.addMarker(
-                            MarkerOptions().title("Your Location").position(
-                                LatLng(lastKnownLocation.latitude, lastKnownLocation.longitude)
-                            )
-                        )!!
                     } else {
                         Log.d("penis", "Current location is null. Using defaults.")
                         Log.e("fuck google", "Exception: %s", task.exception)
