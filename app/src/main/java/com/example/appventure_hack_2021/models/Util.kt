@@ -1,7 +1,5 @@
 package com.example.appventure_hack_2021.models
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalDateTime

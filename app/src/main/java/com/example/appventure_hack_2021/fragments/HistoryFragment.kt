@@ -21,11 +21,6 @@ class HistoryFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_history, container, false)
 
-        view.findViewById<Toolbar>(R.id.toolbar).setNavigationOnClickListener {
-            // switch fragment back to home
-            (activity as NavigationActivity).replaceFragment(R.id.nav_home)
-        }
-
         view.findViewById<RecyclerView>(R.id.history_recycler_view).apply {
             layoutManager = LinearLayoutManager(context)
             adapter = HistoryRecyclerViewAdapter(user.historyList, context, childFragmentManager)

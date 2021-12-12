@@ -15,6 +15,8 @@ import com.example.appventure_hack_2021.firebaseUser
 import com.example.appventure_hack_2021.models.*
 import com.example.appventure_hack_2021.user
 import java.time.Duration
+import java.time.LocalDate
+import kotlin.random.Random
 
 class HomeFragment : Fragment() {
     override fun onCreateView(
@@ -67,6 +69,8 @@ class HomeFragment : Fragment() {
                     }
                 },
                 Pair(R.layout.cardview_daily_route) {
+                    val today = LocalDate.now(offset)
+                    val generator = Random(today.dayOfMonth * 301 - today.year xor 46 + today.monthValue)
 
                 }
             ))

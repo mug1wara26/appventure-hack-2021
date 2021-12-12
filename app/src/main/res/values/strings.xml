@@ -60,7 +60,6 @@
     <string name="add_favourite_location_text">Add</string>
     <string name="done">Done</string>
 
-    <string name="history_title">History</string>
     <string name="history_start_stop_text">%1$s to %2$s</string>
     <string name="history_content_text">
         Distance Cycled: %1$.2f km \nOn %2$s\nTime Spent: %3$s
