@@ -14,6 +14,7 @@ import com.example.appventure_hack_2021.R
 import com.example.appventure_hack_2021.firebaseUser
 import com.example.appventure_hack_2021.models.*
 import com.example.appventure_hack_2021.user
+import com.google.android.gms.maps.model.LatLng
 import java.time.Duration
 import java.time.LocalDate
 import kotlin.random.Random
@@ -71,7 +72,26 @@ class HomeFragment : Fragment() {
                 Pair(R.layout.cardview_daily_route) {
                     val today = LocalDate.now(offset)
                     val generator = Random(today.dayOfMonth * 301 - today.year xor 46 + today.monthValue)
-
+                    if (false) {
+                        val start =
+                            ((activity as NavigationActivity).fragments[R.id.nav_map] as MapFragment)
+                                .checkLocationInCountry(
+                                    LatLng(
+                                        generator.nextDouble(
+                                            countryLatRange.start,
+                                            countryLatRange.endInclusive
+                                        ),
+                                        generator.nextDouble(
+                                            countryLngRange.start,
+                                            countryLngRange.endInclusive
+                                        )
+                                    )
+                                )
+                        do {
+                            val end = null
+                            break
+                        } while (end == null)
+                    }
                 }
             ))
         }

@@ -78,19 +78,17 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         Log.i("MainActivity", "onResume called $login_complete")
         if (login_complete) {
-            GetDataFromRTDB(userRef, object: GetDataFromRTDB.GetDataListener{
-                override fun onSuccess(snapshot: DataSnapshot) {
-                    // Check if user exists
-                    if (!snapshot.exists()) {
-                        user = User(firebaseUser.uid)
-                        userRef.setValue(user)
-                    } else user = snapshot.getValue(User::class.java)!!
+            getDataFromRTDB(userRef) {
+                // Check if user exists
+                if (!it.exists()) {
+                    user = User(firebaseUser.uid)
+                    userRef.setValue(user)
+                } else user = it.getValue(User::class.java)!!
 
-                    Log.i("user", user.toString())
+                Log.i("user", user.toString())
 
-                    startNavigation()
-                }
-            }).getData()
+                startNavigation()
+            }
         }
     }
 

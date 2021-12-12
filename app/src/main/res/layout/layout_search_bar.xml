@@ -9,8 +9,8 @@
     app:layout_constraintTop_toTopOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
-    android:layout_marginTop="5dp"
-    android:layout_marginHorizontal="5dp">
+    android:layout_margin="@dimen/margin_small"
+    android:padding="@dimen/margin_small" >
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -23,18 +23,19 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             android:completionThreshold="1"
-            android:hint="@string/search"/>
+            android:hint="@string/search" />
 
         <ImageButton
             android:id="@+id/search_layout_search_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/white"
+            android:layout_marginLeft="@dimen/margin_small"
             android:src="@drawable/search_icon"
             android:contentDescription="@string/search"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:tint="@color/cardview_light_background" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

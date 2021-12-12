@@ -12,7 +12,6 @@
     <string name="title_settings">Settings</string>
 
     <!-- Settings Fragment Strings -->
-    <string name="set_home_button_text">Set Home Location</string>
     <string name="difficulty_text">Difficulty</string>
     <string name="theme_text">"Theme: "</string>
     <string name="confirm_theme_change">
@@ -27,6 +26,7 @@
 
     <!-- Map Fragment Strings -->
     <string name="search">Search</string>
+    <string name="map_favourite_button_description">Add To Favourites</string>
 
     <!-- Home Fragment Strings -->
     <string name="home_greeting">Hello, %1$s</string>

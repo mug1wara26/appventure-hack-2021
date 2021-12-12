@@ -20,23 +20,24 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.appventure_hack_2021.BuildConfig
 import com.example.appventure_hack_2021.R
+import com.example.appventure_hack_2021.models.LocationData
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.io.IOException
-
-import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.graphics.Color
 import android.widget.*
 import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.example.appventure_hack_2021.models.History
-import com.example.appventure_hack_2021.models.LocationData
 import com.example.appventure_hack_2021.userRef
 import com.google.android.gms.maps.model.*
 
@@ -50,9 +51,13 @@ import kotlin.properties.Delegates
 
 const val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1000
 const val DEFAULT_ZOOM = 13.0F
+const val countryName = "Singapore"
+val countryLatRange = 1.284868..1.464896
+val countryLngRange = 103.634678..103.989965
 
 @SuppressLint("MissingPermission")
 class MapFragment : Fragment(), OnMapReadyCallback {
+    private lateinit var geocoder: Geocoder
     private lateinit var autoCompleteTextView: AutoCompleteTextView
     private lateinit var mMap: GoogleMap
     private lateinit var marker: Marker
@@ -72,6 +77,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        geocoder = Geocoder(context)
+
         val view = inflater.inflate(R.layout.fragment_map, container, false)
 
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
@@ -84,7 +91,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
         autoCompleteTextView = view.findViewById(R.id.input_search)
 
-        var addressNameArrayList: List<String> = ArrayList()
+        var addressNameList: List<String> = ArrayList()
         autoCompleteTextView.addTextChangedListener(object: TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
@@ -92,7 +99,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 val adapter: ArrayAdapter<String> = ArrayAdapter<String>(
                     requireContext(),
                     android.R.layout.simple_dropdown_item_1line,
-                    addressNameArrayList
+                    addressNameList
                 )
                 autoCompleteTextView.setAdapter(adapter)
                 autoCompleteTextView.showDropDown()
@@ -104,15 +111,14 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 // location name from search view.
                 val location = autoCompleteTextView.text.toString()
 
-                val geocoder = Geocoder(context)
                 try {
                     // on below line we are getting location from the
                     // location name and adding that location to address list.
                     addressList = geocoder.getFromLocationName(location, 1)
                     if (addressList != null) {
-                        addressNameArrayList = (addressList as List<Address>).map { it.getAddressLine(0) }
+                        addressNameList = (addressList as List<Address>).map { it.getAddressLine(0) }
                     }
-                    Log.i("addressList", addressNameArrayList.toString())
+                    Log.i("addressList", addressNameList.toString())
                 } catch (e: IOException) {
                     e.printStackTrace()
                 }
@@ -216,6 +222,12 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             )
 
             userRef.child("settings").child("history").push().setValue(history)
+        }
+
+        view.findViewById<FloatingActionButton>(R.id.map_add_favourite_button).setOnClickListener {
+            val location = LocationData("your face", LatLng(0.0, 0.0))
+            // TODO: make location be the current location
+            AddFavouriteDialogFragment(location).show(childFragmentManager, "Add Favourite Dialog")
         }
 
         mapFragment.getMapAsync(this)
@@ -327,15 +339,27 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                     if (task.isSuccessful || task.result != null) {
                         // Set the map's camera position to the current location of the device.
                         lastKnownLocation = task.result
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                            LatLng(lastKnownLocation.latitude,
-                                lastKnownLocation.longitude), DEFAULT_ZOOM))
+                        mMap.moveCamera(
+                            CameraUpdateFactory.newLatLngZoom(
+                                LatLng(
+                                    lastKnownLocation.latitude,
+                                    lastKnownLocation.longitude
+                                ), DEFAULT_ZOOM
+                            )
+                        )
 
+                        marker = mMap.addMarker(
+                            MarkerOptions().title("Your Location").position(
+                                LatLng(lastKnownLocation.latitude, lastKnownLocation.longitude)
+                            )
+                        )!!
                     } else {
                         Log.d("penis", "Current location is null. Using defaults.")
                         Log.e("fuck google", "Exception: %s", task.exception)
-                        mMap.moveCamera(CameraUpdateFactory
-                            .newLatLngZoom(LatLng(33.865143, 151.209900), DEFAULT_ZOOM))
+                        mMap.moveCamera(
+                            CameraUpdateFactory
+                                .newLatLngZoom(LatLng(33.865143, 151.209900), DEFAULT_ZOOM)
+                        )
                         mMap.uiSettings.isMyLocationButtonEnabled = false
                     }
                 }
@@ -345,34 +369,16 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
-    private fun bitmapFromVector(context: Context, vectorResId: Int): BitmapDescriptor {
-        // below line is use to generate a drawable.
-        val vectorDrawable = ContextCompat.getDrawable(context, vectorResId)
+    fun checkLocationInCountry(pos: LatLng) : LocationData? {
+        if (pos.latitude !in countryLatRange || pos.longitude !in countryLngRange) return null
 
-        // below line is use to set bounds to our vector drawable.
-        vectorDrawable!!.setBounds(
-            0,
-            0,
-            vectorDrawable.intrinsicWidth,
-            vectorDrawable.intrinsicHeight
-        )
+        val addressList = geocoder.getFromLocation(pos.latitude, pos.longitude, 1)
 
-        // below line is use to create a bitmap for our
-        // drawable which we have added.
-        val bitmap = Bitmap.createBitmap(
-            vectorDrawable.intrinsicWidth,
-            vectorDrawable.intrinsicHeight,
-            Bitmap.Config.ARGB_8888
-        )
+        if (addressList.isNullOrEmpty()) return null
 
-        // below line is use to add bitmap in our canvas.
-        val canvas = Canvas(bitmap)
+        val address = addressList[0]
+        if (address.countryName != countryName) return null
 
-        // below line is use to draw our
-        // vector drawable in canvas.
-        vectorDrawable.draw(canvas)
-
-        // after generating our bitmap we are returning our bitmap.
-        return BitmapDescriptorFactory.fromBitmap(bitmap)
+        return LocationData(address.featureName, pos)
     }
 }
