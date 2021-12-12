@@ -23,7 +23,6 @@ class SettingsFragment : Fragment(), NavigationActivity.OnEnterListener {
     private var initialised = false
 
     private var lastIndexTheme = 0
-    private lateinit var difficultySpinner: Spinner
     private lateinit var themeSpinner: Spinner
 
     fun getModeIndex(): Int {
@@ -39,23 +38,6 @@ class SettingsFragment : Fragment(), NavigationActivity.OnEnterListener {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_settings, container, false)
         val settingsRef = userRef.child("settings")
-
-        difficultySpinner = view.findViewById(R.id.difficulty_spinner)
-        difficultySpinner.adapter = ArrayAdapter.createFromResource(
-            this.requireContext(),
-            R.array.difficulties,
-            android.R.layout.simple_spinner_item
-        ).also { it.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
-
-        difficultySpinner.setSelection(user.settings.difficulty_idx)
-
-        difficultySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, index: Int, id: Long) {
-                settingsRef.child("difficulty_idx").setValue(index)
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
-        }
 
         themeSpinner = view.findViewById(R.id.theme_spinner)
         initialised = true

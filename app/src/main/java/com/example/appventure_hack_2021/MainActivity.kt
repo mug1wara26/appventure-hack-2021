@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import com.example.appventure_hack_2021.databinding.ActivityMainBinding
 import com.example.appventure_hack_2021.fragments.modes
 import com.example.appventure_hack_2021.models.User
+import com.example.appventure_hack_2021.models.getData
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
 import com.google.firebase.auth.FirebaseAuth
@@ -77,7 +78,7 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         Log.i("MainActivity", "onResume called $login_complete")
         if (login_complete) {
-            getDataFromRTDB(userRef) {
+            userRef.getData {
                 // Check if user exists
                 if (!it.exists()) {
                     user = User(firebaseUser.uid)

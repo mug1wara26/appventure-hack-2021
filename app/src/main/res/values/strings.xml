@@ -12,7 +12,6 @@
     <string name="title_settings">Settings</string>
 
     <!-- Settings Fragment Strings -->
-    <string name="difficulty_text">Difficulty</string>
     <string name="theme_text">"Theme: "</string>
     <string name="confirm_theme_change">
         Are you sure you wish to change the theme?
@@ -39,7 +38,7 @@
         You have not been on any trips yet!
     </string>
     <string name="history_latest_text">
-        Your Latest Trip:\nDistance Cycled: %1$.2f km\nOn %2$s\nTime Spent: %3$s
+        Your Latest Trip:\nDistance Cycled: %1$d.%2$d km\nOn %3$s\nTime Spent: %4$s
     </string>
     <string name="open_history_text">Open History</string>
 
@@ -52,7 +51,7 @@
     <!-- History Fragment Strings -->
     <string name="history_stats_title">Overall Statistics</string>
     <string name="history_stats_text">
-        Total Trips: %1$d \nTotal Distance Cycled: %2$.2f km \nTotal Time Spent: %3$s
+        Total Trips: %1$d \nTotal Distance Cycled: %2$d.%3$d km \nTotal Time Spent: %4$s
     </string>
 
     <string name="history">History</string>
@@ -62,7 +61,7 @@
 
     <string name="history_start_stop_text">%1$s to %2$s</string>
     <string name="history_content_text">
-        Distance Cycled: %1$.2f km \nOn %2$s\nTime Spent: %3$s
+        Distance Cycled: %1$d.%2$d km \nOn %3$s\nTime Spent: %4$s
     </string>
 
     <!-- Add Favourite Dialog Strings -->

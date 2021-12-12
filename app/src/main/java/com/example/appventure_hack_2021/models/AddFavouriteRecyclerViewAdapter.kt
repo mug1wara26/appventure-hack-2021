@@ -9,10 +9,10 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appventure_hack_2021.R
-import com.example.appventure_hack_2021.getDataFromRTDB
 import com.example.appventure_hack_2021.userRef
 import com.google.android.gms.maps.model.LatLng
 import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 import kotlin.properties.Delegates
 
 
@@ -70,13 +70,13 @@ class AddFavouriteRecyclerViewAdapter private constructor(
         fun new(context: Context, vararg locations: LocationData): AddFavouriteRecyclerViewAdapter {
             val latch = CountDownLatch(1)
             var favourites: List<LocationData>? = null
-            getDataFromRTDB(favoriteRef) { snapshot ->
+            favoriteRef.getData { snapshot ->
                 Log.i("AddFavouritesAdapter", "snapshot: $snapshot")
                 if (snapshot.value == null) {
                     // no favourites added yet
                     favourites = listOf()
                     latch.countDown()
-                    return@getDataFromRTDB
+                    return@getData
                 }
 
                 favourites = snapshot.children.map { LocationData(it.key!!, it.getValue(LatLng::class.java)!!) }
@@ -84,7 +84,7 @@ class AddFavouriteRecyclerViewAdapter private constructor(
                 latch.countDown()
             }
             Log.i("AddFavouritesAdapter", "starting block")
-            latch.await()
+            latch.await() // TODO: code is stuck here, cannot progress past this point
             Log.i("AddFavouritesAdapter", "block ending")
             return AddFavouriteRecyclerViewAdapter(context, locations, favourites!!)
         }

@@ -1,7 +1,7 @@
 package com.example.appventure_hack_2021.fragments
 
-import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,33 +9,31 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appventure_hack_2021.R
+import com.example.appventure_hack_2021.models.HistoryNullable
 import com.example.appventure_hack_2021.models.HistoryRecyclerViewAdapter
-import com.example.appventure_hack_2021.refreshUser
-import com.example.appventure_hack_2021.user
+import com.example.appventure_hack_2021.models.getListener
+import com.example.appventure_hack_2021.userRef
 
 class HistoryFragment : Fragment() {
-    private lateinit var recyclerView: RecyclerView
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_history, container, false)
-        recyclerView = view.findViewById(R.id.history_recycler_view)
-        recyclerView.apply {
+        val adapter = HistoryRecyclerViewAdapter(requireContext(), childFragmentManager)
+
+        userRef.child("historyList").addValueEventListener(getListener { snapshot ->
+            adapter.histories = snapshot.children.map { it.getValue(HistoryNullable::class.java)!!.toHistory() }
+            Log.i("historyRecycler", "dataset set: ${adapter.histories}")
+            adapter.notifyDataSetChanged()
+        })
+
+        view.findViewById<RecyclerView>(R.id.history_recycler_view).apply {
             layoutManager = LinearLayoutManager(context)
-            adapter = HistoryRecyclerViewAdapter(user.historyList, context, childFragmentManager)
+            this.adapter = adapter
         }
 
         return view
-    }
-
-    @SuppressLint("NotifyDataSetChanged")
-    override fun onResume() {
-        super.onResume()
-        refreshUser()
-        val adapter = recyclerView.adapter as HistoryRecyclerViewAdapter
-        adapter.histories = user.historyList
-        adapter.notifyDataSetChanged()
     }
 }

@@ -14,17 +14,20 @@ import java.time.Duration
 
 private const val stats_id = 0
 class HistoryRecyclerViewAdapter(
-    var histories: List<History>,
     private val context: Context,
     private val manager: FragmentManager
 ) : RecyclerView.Adapter<HistoryRecyclerViewAdapter.ViewHolder>()  {
+    var histories: List<History> = listOf()
+
     class ViewHolder(private val view: View, private val context: Context) : RecyclerView.ViewHolder(view) {
         fun bindStats(histories: List<History>) {
+            val totalDistance = histories.sumOf { it.totalDistance }
             view.findViewById<TextView>(R.id.content).text = context.getString(
                 R.string.history_stats_text,
                 histories.size,
-                histories.sumOf { it.totalDistance.toDouble() },
-                Duration.ofSeconds(histories.sumOf { it.startTime - it.endTime }).toFormattedString()
+                totalDistance / 1000,
+                totalDistance % 1000 / 10,
+                Duration.ofMillis(histories.sumOf { it.startTime - it.endTime }).toFormattedString()
             )
             return
         }
@@ -35,12 +38,13 @@ class HistoryRecyclerViewAdapter(
             }
 
             view.findViewById<TextView>(R.id.header).text = context.getString(
-                R.string.history_start_stop_text, history.start.name, history.start.name
+                R.string.history_start_stop_text, history.start.name, history.end.name
             )
 
             view.findViewById<TextView>(R.id.content).text = context.getString(
                 R.string.history_content_text,
-                history.totalDistance,
+                history.totalDistance / 1000,
+                history.totalDistance % 1000 / 10,
                 fromStartToEndString(history.startTime.toTime(), history.endTime.toTime()),
                 Duration.ofSeconds(history.startTime - history.endTime).toFormattedString()
             )

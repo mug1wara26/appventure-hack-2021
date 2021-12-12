@@ -6,4 +6,4 @@ data class History(
     val startTime: Long,
     val endTime: Long,
     val totalDistance: Int
-    )
+)

@@ -221,7 +221,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 distance
             )
 
-            userRef.child("settings").child("history").push().setValue(history)
+            userRef.child("historyList").push().setValue(history)
         }
 
         view.findViewById<FloatingActionButton>(R.id.map_add_favourite_button).setOnClickListener {
