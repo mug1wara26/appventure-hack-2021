@@ -64,21 +64,27 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var lastKnownLocation: Location
     private lateinit var polylineToAdd: Polyline
-    private lateinit var startLocationData: LocationData
-    private lateinit var endLocationData: LocationData
+    lateinit var startLocationData: LocationData
+    lateinit var endLocationData: LocationData
+    lateinit var searchLocationData: LocationData
+    private lateinit var startButton: Button
+    private lateinit var distanceTextView: TextView
     private var startTime by Delegates.notNull<Long>()
     private var endTime by Delegates.notNull<Long>()
     private var distance by Delegates.notNull<Int>()
     private var locationPermissionGranted = false
     private var toFocus = false
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        geocoder = Geocoder(context)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        geocoder = Geocoder(context)
-
         val view = inflater.inflate(R.layout.fragment_map, container, false)
 
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
@@ -86,7 +92,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         // Construct a FusedLocationProviderClient.
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
 
-
+        getDeviceLocation()
         var addressList: List<Address>? = null
 
         autoCompleteTextView = view.findViewById(R.id.input_search)
@@ -119,18 +125,22 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                         addressNameList = (addressList as List<Address>).map { it.getAddressLine(0) }
                     }
                     Log.i("addressList", addressNameList.toString())
+
+                    val address = addressList!![0]
+                    searchLocationData = LocationData(address.featureName, LatLng(address.latitude, address.longitude))
                 } catch (e: IOException) {
                     e.printStackTrace()
                 }
             }
         })
 
-        val startButton: Button = view.findViewById(R.id.start_route_button)
+        startButton = view.findViewById(R.id.start_route_button)
         val endButton: Button = view.findViewById(R.id.end_route_button)
-        val distanceTextView: TextView = view.findViewById(R.id.distance_textview)
+        distanceTextView = view.findViewById(R.id.distance_textview)
 
         val searchButton: ImageButton = view.findViewById(R.id.search_layout_search_button)
         searchButton.setOnClickListener {
+
             if (!addressList.isNullOrEmpty()) {
                 autoCompleteTextView.setText("")
                 autoCompleteTextView.dismissDropDown()
@@ -138,67 +148,14 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 val imm: InputMethodManager? = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
                 imm?.hideSoftInputFromWindow(searchButton.windowToken, 0)
 
-                val address = addressList!![0]
+
                 // on below line we are creating a variable for our location
                 // where we will add our locations latitude and longitude.
-                val destination = LatLng(address.latitude, address.longitude)
 
-                // on below line we are adding marker to that position.
-                if (this::marker.isInitialized) marker.remove()
-                marker = mMap.addMarker(MarkerOptions().position(destination).title(address.featureName))!!
-
-                // below line is to animate camera to that position.
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(destination, DEFAULT_ZOOM))
-
-                getDeviceLocation()
-                val url = (("https://maps.googleapis.com/maps/api/directions/json?origin="
-                        + lastKnownLocation.latitude) + "," + lastKnownLocation.longitude.toString() + "&destination="
-                        + destination.latitude.toString() + "," + destination.longitude.toString() + "&mode=BICYCLING&key=${BuildConfig.MAPS_API_KEY}"
-                        + "&units=metric")
-                Log.i("request url", url)
-                val queue = Volley.newRequestQueue(requireContext())
-
-                val stringRequest = StringRequest(Request.Method.GET, url,
-                    { response ->
-                        // Display the first 500 characters of the response string.
-                        Log.i("String Request Response", "Response is: $response")
-
-                        val result = JSONObject(response)
-                        val routes: JSONArray = result.getJSONArray("routes")
-
-                        distanceTextView.text = routes.getJSONObject(0).getJSONArray("legs").getJSONObject(0)
-                                .getJSONObject("distance").getString("text")
-                        distance = routes.getJSONObject(0).getJSONArray("legs").getJSONObject(0)
-                            .getJSONObject("distance").getInt("value")
-
-
-                        val steps = routes.getJSONObject(0).getJSONArray("legs")
-                            .getJSONObject(0).getJSONArray("steps")
-
-                        val lines: MutableList<LatLng> = ArrayList()
-
-                        for (i in 0 until steps.length()) {
-                            val polyline =
-                                steps.getJSONObject(i).getJSONObject("polyline").getString("points")
-                            for (p in decodePolyline(polyline)!!) {
-                                lines.add(p)
-                            }
-                        }
-
-                        if (this::polylineToAdd.isInitialized) polylineToAdd.remove()
-                        polylineToAdd = mMap.addPolyline(PolylineOptions().addAll(lines).width(6F).color(Color.BLUE))
-
-                        startButton.visibility = View.VISIBLE
-
-                        val locationAddress: Address = Geocoder(requireContext(), Locale.getDefault()).getFromLocation(lastKnownLocation.latitude, lastKnownLocation.longitude, 1)[0]
-                        startLocationData = LocationData(locationAddress.featureName, LatLng(lastKnownLocation.latitude, lastKnownLocation.longitude))
-                        endLocationData = LocationData(address.featureName, LatLng(destination.latitude, destination.longitude))
-                    },
-                    { error -> Log.e("stringRequest error", error.toString()) })
-
-                queue.add(stringRequest)
-
-
+                val locationAddress: Address = Geocoder(requireContext(), Locale.getDefault()).getFromLocation(lastKnownLocation.latitude, lastKnownLocation.longitude, 1)[0]
+                startLocationData = LocationData(locationAddress.featureName, LatLng(lastKnownLocation.latitude, lastKnownLocation.longitude))
+                endLocationData = searchLocationData
+                plotRoute()
             }
         }
 
@@ -228,7 +185,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             getDeviceLocation()
             val locationAddress: Address = Geocoder(requireContext(), Locale.getDefault()).getFromLocation(lastKnownLocation.latitude, lastKnownLocation.longitude, 1)[0]
             val location = LocationData(locationAddress.featureName, LatLng(lastKnownLocation.latitude, lastKnownLocation.longitude))
-            AddFavouriteDialogFragment(location).show(childFragmentManager, "Add Favourite Dialog")
+            AddFavouriteDialogFragment(location, searchLocationData).show(childFragmentManager, "Add Favourite Dialog")
         }
 
         mapFragment.getMapAsync(this)
@@ -242,8 +199,59 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         return view
     }
 
+    fun plotRoute() {
+        // on below line we are adding marker to that position.
+        if (this::marker.isInitialized) marker.remove()
+        marker = mMap.addMarker(MarkerOptions().position(endLocationData.pos).title(endLocationData.name))!!
+
+        // below line is to animate camera to that position.
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(endLocationData.pos, DEFAULT_ZOOM))
+        val url = (("https://maps.googleapis.com/maps/api/directions/json?origin="
+                + lastKnownLocation.latitude) + "," + lastKnownLocation.longitude.toString() + "&destination="
+                + endLocationData.pos.latitude.toString() + "," + endLocationData.pos.longitude.toString() + "&mode=BICYCLING&key=${BuildConfig.MAPS_API_KEY}"
+                + "&units=metric")
+        Log.i("request url", url)
+        val queue = Volley.newRequestQueue(requireContext())
+
+        val stringRequest = StringRequest(Request.Method.GET, url,
+            { response ->
+                // Display the first 500 characters of the response string.
+                Log.i("String Request Response", "Response is: $response")
+
+                val result = JSONObject(response)
+                val routes: JSONArray = result.getJSONArray("routes")
+
+                distanceTextView.text = routes.getJSONObject(0).getJSONArray("legs").getJSONObject(0)
+                    .getJSONObject("distance").getString("text")
+                distance = routes.getJSONObject(0).getJSONArray("legs").getJSONObject(0)
+                    .getJSONObject("distance").getInt("value")
+
+
+                val steps = routes.getJSONObject(0).getJSONArray("legs")
+                    .getJSONObject(0).getJSONArray("steps")
+
+                val lines: MutableList<LatLng> = ArrayList()
+
+                for (i in 0 until steps.length()) {
+                    val polyline =
+                        steps.getJSONObject(i).getJSONObject("polyline").getString("points")
+                    for (p in decodePolyline(polyline)) {
+                        lines.add(p)
+                    }
+                }
+
+                if (this::polylineToAdd.isInitialized) polylineToAdd.remove()
+                polylineToAdd = mMap.addPolyline(PolylineOptions().addAll(lines).width(6F).color(Color.BLUE))
+
+                startButton.visibility = View.VISIBLE
+            },
+            { error -> Log.e("stringRequest error", error.toString()) })
+
+        queue.add(stringRequest)
+    }
+
     /** POLYLINE DECODER - http://jeffreysambells.com/2010/05/27/decoding-polylines-from-google-maps-direction-api-with-java  */
-    private fun decodePolyline(encoded: String): List<LatLng>? {
+    private fun decodePolyline(encoded: String): List<LatLng> {
         val poly: MutableList<LatLng> = ArrayList()
         var index = 0
         val len = encoded.length
@@ -254,7 +262,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             var shift = 0
             var result = 0
             do {
-                b = encoded[index++].toInt() - 63
+                b = encoded[index++].code - 63
                 result = result or (b and 0x1f shl shift)
                 shift += 5
             } while (b >= 0x20)
@@ -263,7 +271,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             shift = 0
             result = 0
             do {
-                b = encoded[index++].toInt() - 63
+                b = encoded[index++].code - 63
                 result = result or (b and 0x1f shl shift)
                 shift += 5
             } while (b >= 0x20)
@@ -365,7 +373,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
-    fun checkLocationInCountry(pos: LatLng) : LocationData? {
+    fun checkLocationInCountry(geocoder: Geocoder, pos: LatLng) : LocationData? {
         if (pos.latitude !in countryLatRange || pos.longitude !in countryLngRange) return null
 
         val addressList = geocoder.getFromLocation(pos.latitude, pos.longitude, 1)
@@ -373,6 +381,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         if (addressList.isNullOrEmpty()) return null
 
         val address = addressList[0]
+        Log.i("map", "address: $address")
         if (address.countryName != countryName) return null
 
         return LocationData(address.featureName, pos)

@@ -12,7 +12,6 @@ import com.example.appventure_hack_2021.R
 import com.example.appventure_hack_2021.userRef
 import com.google.android.gms.maps.model.LatLng
 import java.util.concurrent.CountDownLatch
-import java.util.concurrent.TimeUnit
 import kotlin.properties.Delegates
 
 

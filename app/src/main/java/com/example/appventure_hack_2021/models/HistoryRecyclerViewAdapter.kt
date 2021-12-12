@@ -27,7 +27,7 @@ class HistoryRecyclerViewAdapter(
                 histories.size,
                 totalDistance / 1000,
                 totalDistance % 1000 / 10,
-                Duration.ofMillis(histories.sumOf { it.startTime - it.endTime }).toFormattedString()
+                Duration.ofMillis(histories.sumOf { it.endTime - it.startTime }).toFormattedString()
             )
             return
         }
@@ -46,7 +46,7 @@ class HistoryRecyclerViewAdapter(
                 history.totalDistance / 1000,
                 history.totalDistance % 1000 / 10,
                 fromStartToEndString(history.startTime.toTime(), history.endTime.toTime()),
-                Duration.ofSeconds(history.startTime - history.endTime).toFormattedString()
+                Duration.ofSeconds(history.endTime - history.startTime).toFormattedString()
             )
         }
     }
