@@ -18,6 +18,7 @@ class AddFavouriteDialogFragment(
             val view = layoutInflater.inflate(R.layout.dialog_add_favourite, null)
             view.findViewById<RecyclerView>(R.id.add_favourites_recycler_view).apply {
                 layoutManager = LinearLayoutManager(context)
+
                 adapter = AddFavouriteRecyclerViewAdapter.new(context, *locations)
             }
             AlertDialog.Builder(activity).apply {

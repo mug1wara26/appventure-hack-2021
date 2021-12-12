@@ -83,6 +83,7 @@ class MainActivity : AppCompatActivity() {
                     user = User(firebaseUser.uid)
                     userRef.setValue(user)
                 } else user = it.getValue(User::class.java)!!
+
                 Log.i("user", user.toString())
 
                 startNavigation()

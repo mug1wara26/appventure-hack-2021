@@ -5,5 +5,5 @@ data class History(
     val end: LocationData,
     val startTime: Long,
     val endTime: Long,
-    val totalDistance: Float
+    val totalDistance: Int
     )

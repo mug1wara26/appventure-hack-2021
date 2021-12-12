@@ -15,6 +15,7 @@ import com.google.android.gms.maps.model.LatLng
 import java.util.concurrent.CountDownLatch
 import kotlin.properties.Delegates
 
+
 class AddFavouriteRecyclerViewAdapter private constructor(
     private val context: Context,
     private val locations: Array<out LocationData>,
@@ -29,7 +30,8 @@ class AddFavouriteRecyclerViewAdapter private constructor(
         private lateinit var button: Button
 
         private fun setButtonText() {
-            button.text = context.getString(if (isFavourite) R.string.remove_favourite_text else R.string.add_favourite_text)
+            button.text =
+                context.getString(if (isFavourite) R.string.remove_favourite_text else R.string.add_favourite_text)
         }
 
         fun bind(location: LocationData) {
