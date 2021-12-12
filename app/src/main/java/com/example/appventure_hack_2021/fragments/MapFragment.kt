@@ -126,8 +126,13 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                     }
                     Log.i("addressList", addressNameList.toString())
 
-                    val address = addressList!![0]
-                    searchLocationData = LocationData(address.featureName, LatLng(address.latitude, address.longitude))
+                    if (!addressList.isNullOrEmpty()) {
+                        val address = addressList!![0]
+                        searchLocationData = LocationData(
+                            address.featureName,
+                            LatLng(address.latitude, address.longitude)
+                        )
+                    }
                 } catch (e: IOException) {
                     e.printStackTrace()
                 }
