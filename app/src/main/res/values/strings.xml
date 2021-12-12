@@ -64,4 +64,6 @@
     <string name="history_content_text">
         Distance Cycled: %1$.2f km \nOn %2$s\nTime Spent: %3$s
     </string>
+    <string name="start">Start</string>
+    <string name="end">End</string>
 </resources>

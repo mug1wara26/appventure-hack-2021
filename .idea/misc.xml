@@ -20,6 +20,7 @@
         <entry key="app/src/main/res/layout/fragment_map.xml" value="0.18697916666666667" />
         <entry key="app/src/main/res/layout/fragment_settings.xml" value="0.33" />
         <entry key="app/src/main/res/layout/layout_search_bar.xml" value="0.22291666666666668" />
+        <entry key="app/src/main/res/layouts/main/drawable/my_location_icon.xml" value="0.16458333333333333" />
         <entry key="app/src/main/res/menu/bottom_nav_menu.xml" value="0.24479166666666666" />
       </map>
     </option>

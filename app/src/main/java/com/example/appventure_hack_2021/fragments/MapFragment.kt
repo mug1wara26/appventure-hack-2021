@@ -15,9 +15,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
-import android.widget.ImageButton
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -29,23 +26,44 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.libraries.places.api.Places
-import com.google.android.libraries.places.api.net.PlacesClient
 import java.io.IOException
+
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.widget.*
+import com.android.volley.Request
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
+import com.example.appventure_hack_2021.models.History
+import com.example.appventure_hack_2021.models.LocationData
+import com.example.appventure_hack_2021.userRef
+import com.google.android.gms.maps.model.*
+
+import org.json.JSONArray
+
+import org.json.JSONObject
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.properties.Delegates
+
 
 const val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1000
 const val DEFAULT_ZOOM = 13.0F
 
+@SuppressLint("MissingPermission")
 class MapFragment : Fragment(), OnMapReadyCallback {
     private lateinit var autoCompleteTextView: AutoCompleteTextView
     private lateinit var mMap: GoogleMap
     private lateinit var marker: Marker
-    private lateinit var placesClient: PlacesClient
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var lastKnownLocation: Location
+    private lateinit var polylineToAdd: Polyline
+    private lateinit var startLocationData: LocationData
+    private lateinit var endLocationData: LocationData
+    private var startTime by Delegates.notNull<Long>()
+    private var endTime by Delegates.notNull<Long>()
+    private var distance by Delegates.notNull<Int>()
     private var locationPermissionGranted = false
     private var toFocus = false
 
@@ -57,10 +75,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         val view = inflater.inflate(R.layout.fragment_map, container, false)
 
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
-
-        // Construct a PlacesClient
-        Places.initialize(requireContext(), BuildConfig.MAPS_API_KEY)
-        placesClient = Places.createClient(requireContext())
 
         // Construct a FusedLocationProviderClient.
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
@@ -105,24 +119,103 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             }
         })
 
+        val startButton: Button = view.findViewById(R.id.start_route_button)
+        val endButton: Button = view.findViewById(R.id.end_route_button)
+        val distanceTextView: TextView = view.findViewById(R.id.distance_textview)
+
         val searchButton: ImageButton = view.findViewById(R.id.search_layout_search_button)
         searchButton.setOnClickListener {
             if (!addressList.isNullOrEmpty()) {
+                autoCompleteTextView.setText("")
+                autoCompleteTextView.dismissDropDown()
+
                 val imm: InputMethodManager? = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
                 imm?.hideSoftInputFromWindow(searchButton.windowToken, 0)
 
                 val address = addressList!![0]
                 // on below line we are creating a variable for our location
                 // where we will add our locations latitude and longitude.
-                val latLng = LatLng(address.latitude, address.longitude)
+                val destination = LatLng(address.latitude, address.longitude)
 
                 // on below line we are adding marker to that position.
-                marker.remove()
-                marker = mMap.addMarker(MarkerOptions().position(latLng).title(address.featureName))!!
+                if (this::marker.isInitialized) marker.remove()
+                marker = mMap.addMarker(MarkerOptions().position(destination).title(address.featureName))!!
 
                 // below line is to animate camera to that position.
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10f))
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(destination, DEFAULT_ZOOM))
+
+                getDeviceLocation()
+                val url = (("https://maps.googleapis.com/maps/api/directions/json?origin="
+                        + lastKnownLocation.latitude) + "," + lastKnownLocation.longitude.toString() + "&destination="
+                        + destination.latitude.toString() + "," + destination.longitude.toString() + "&mode=BICYCLING&key=${BuildConfig.MAPS_API_KEY}"
+                        + "&units=metric")
+                Log.i("request url", url)
+                val queue = Volley.newRequestQueue(requireContext())
+
+                val stringRequest = StringRequest(Request.Method.GET, url,
+                    { response ->
+                        // Display the first 500 characters of the response string.
+                        Log.i("String Request Response", "Response is: $response")
+
+                        val result = JSONObject(response)
+                        val routes: JSONArray = result.getJSONArray("routes")
+
+                        distanceTextView.text = routes.getJSONObject(0).getJSONArray("legs").getJSONObject(0)
+                                .getJSONObject("distance").getString("text")
+                        distance = routes.getJSONObject(0).getJSONArray("legs").getJSONObject(0)
+                            .getJSONObject("distance").getInt("value")
+
+
+                        val steps = routes.getJSONObject(0).getJSONArray("legs")
+                            .getJSONObject(0).getJSONArray("steps")
+
+                        val lines: MutableList<LatLng> = ArrayList()
+
+                        for (i in 0 until steps.length()) {
+                            val polyline =
+                                steps.getJSONObject(i).getJSONObject("polyline").getString("points")
+                            for (p in decodePolyline(polyline)!!) {
+                                lines.add(p)
+                            }
+                        }
+
+                        if (this::polylineToAdd.isInitialized) polylineToAdd.remove()
+                        polylineToAdd = mMap.addPolyline(PolylineOptions().addAll(lines).width(6F).color(Color.BLUE))
+
+                        startButton.visibility = View.VISIBLE
+
+                        val locationAddress: Address = Geocoder(requireContext(), Locale.getDefault()).getFromLocation(lastKnownLocation.latitude, lastKnownLocation.longitude, 1)[0]
+                        startLocationData = LocationData(locationAddress.featureName, LatLng(lastKnownLocation.latitude, lastKnownLocation.longitude))
+                        endLocationData = LocationData(address.featureName, LatLng(destination.latitude, destination.longitude))
+                    },
+                    { error -> Log.e("stringRequest error", error.toString()) })
+
+                queue.add(stringRequest)
+
+
             }
+        }
+
+        startButton.setOnClickListener {
+            startButton.visibility = View.INVISIBLE
+            endButton.visibility = View.VISIBLE
+            startTime = System.currentTimeMillis()
+        }
+
+        endButton.setOnClickListener {
+            endTime = System.currentTimeMillis()
+            distanceTextView.visibility = View.INVISIBLE
+            endButton.visibility = View.INVISIBLE
+
+            val history = History(
+                startLocationData,
+                endLocationData,
+                startTime,
+                endTime,
+                distance
+            )
+
+            userRef.child("settings").child("history").push().setValue(history)
         }
 
         mapFragment.getMapAsync(this)
@@ -132,11 +225,46 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             focusSearchWithContext(requireContext())
         }
 
+
         return view
+    }
+
+    /** POLYLINE DECODER - http://jeffreysambells.com/2010/05/27/decoding-polylines-from-google-maps-direction-api-with-java  */
+    private fun decodePolyline(encoded: String): List<LatLng>? {
+        val poly: MutableList<LatLng> = ArrayList()
+        var index = 0
+        val len = encoded.length
+        var lat = 0
+        var lng = 0
+        while (index < len) {
+            var b: Int
+            var shift = 0
+            var result = 0
+            do {
+                b = encoded[index++].toInt() - 63
+                result = result or (b and 0x1f shl shift)
+                shift += 5
+            } while (b >= 0x20)
+            val dlat = if (result and 1 != 0) (result shr 1).inv() else result shr 1
+            lat += dlat
+            shift = 0
+            result = 0
+            do {
+                b = encoded[index++].toInt() - 63
+                result = result or (b and 0x1f shl shift)
+                shift += 5
+            } while (b >= 0x20)
+            val dlng = if (result and 1 != 0) (result shr 1).inv() else result shr 1
+            lng += dlng
+            val p = LatLng(lat.toDouble() / 1E5, lng.toDouble() / 1E5)
+            poly.add(p)
+        }
+        return poly
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
+        mMap.isMyLocationEnabled = true
 
         getLocationPermission()
         getDeviceLocation()
@@ -187,7 +315,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
-    @SuppressLint("MissingPermission")
     private fun getDeviceLocation() {
         /*
          * Get the best and most recent location of the device, which may be null in rare
@@ -197,17 +324,13 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             if (locationPermissionGranted) {
                 val locationResult = fusedLocationProviderClient.lastLocation
                 locationResult.addOnCompleteListener(requireActivity()) { task ->
-                    if (task.isSuccessful) {
+                    if (task.isSuccessful || task.result != null) {
                         // Set the map's camera position to the current location of the device.
                         lastKnownLocation = task.result
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                             LatLng(lastKnownLocation.latitude,
                                 lastKnownLocation.longitude), DEFAULT_ZOOM))
 
-
-                        marker = mMap.addMarker(MarkerOptions().title("Your Location").position(
-                            LatLng(lastKnownLocation.latitude, lastKnownLocation.longitude)
-                        ))!!
                     } else {
                         Log.d("penis", "Current location is null. Using defaults.")
                         Log.e("fuck google", "Exception: %s", task.exception)
@@ -220,5 +343,36 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         } catch (e: SecurityException) {
             Log.e("Exception: %s", e.message, e)
         }
+    }
+
+    private fun bitmapFromVector(context: Context, vectorResId: Int): BitmapDescriptor {
+        // below line is use to generate a drawable.
+        val vectorDrawable = ContextCompat.getDrawable(context, vectorResId)
+
+        // below line is use to set bounds to our vector drawable.
+        vectorDrawable!!.setBounds(
+            0,
+            0,
+            vectorDrawable.intrinsicWidth,
+            vectorDrawable.intrinsicHeight
+        )
+
+        // below line is use to create a bitmap for our
+        // drawable which we have added.
+        val bitmap = Bitmap.createBitmap(
+            vectorDrawable.intrinsicWidth,
+            vectorDrawable.intrinsicHeight,
+            Bitmap.Config.ARGB_8888
+        )
+
+        // below line is use to add bitmap in our canvas.
+        val canvas = Canvas(bitmap)
+
+        // below line is use to draw our
+        // vector drawable in canvas.
+        vectorDrawable.draw(canvas)
+
+        // after generating our bitmap we are returning our bitmap.
+        return BitmapDescriptorFactory.fromBitmap(bitmap)
     }
 }

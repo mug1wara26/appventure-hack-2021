@@ -8,17 +8,17 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appventure_hack_2021.R
 import com.example.appventure_hack_2021.models.AddFavouriteRecyclerViewAdapter
-import com.example.appventure_hack_2021.models.Location
+import com.example.appventure_hack_2021.models.LocationData
 
 class AddFavouriteDialogFragment(
-    private vararg val locations: Location
+    private vararg val locationData: LocationData
     ) : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return requireActivity().let {
             val view = layoutInflater.inflate(R.layout.dialog_add_favourite, null)
             view.findViewById<RecyclerView>(R.id.add_favourites_recycler_view).apply {
                 layoutManager = LinearLayoutManager(context)
-                adapter = AddFavouriteRecyclerViewAdapter(*locations)
+                adapter = AddFavouriteRecyclerViewAdapter(*locationData)
             }
             AlertDialog.Builder(it).apply {
                 setView(view)
