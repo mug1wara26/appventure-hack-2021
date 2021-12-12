@@ -19,7 +19,7 @@
             android:paddingTop="@dimen/margin_small"
             android:paddingBottom="@dimen/margin_small"
             android:textColor="@color/white"
-            android:textSize="@dimen/text_large"
+            android:textSize="@dimen/text_extra_large"
             android:text="@string/history_stats_title"
             app:layout_constraintTop_toTopOf="parent" />
 

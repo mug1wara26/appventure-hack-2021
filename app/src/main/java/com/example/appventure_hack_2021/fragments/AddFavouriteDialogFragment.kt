@@ -8,10 +8,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appventure_hack_2021.R
 import com.example.appventure_hack_2021.models.AddFavouriteRecyclerViewAdapter
-import com.example.appventure_hack_2021.models.Location
+import com.example.appventure_hack_2021.models.LocationData
 
 class AddFavouriteDialogFragment(
-    private vararg val locations: Location
+    private vararg val locations: LocationData
     ) : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return requireActivity().let {

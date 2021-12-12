@@ -39,9 +39,6 @@ class SettingsFragment : Fragment(), NavigationActivity.OnEnterListener {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_settings, container, false)
         val settingsRef = userRef.child("settings")
-        view.findViewById<Button>(R.id.set_home_button).setOnClickListener {
-            // TODO: set home location
-        }
 
         difficultySpinner = view.findViewById(R.id.difficulty_spinner)
         difficultySpinner.adapter = ArrayAdapter.createFromResource(
@@ -55,7 +52,6 @@ class SettingsFragment : Fragment(), NavigationActivity.OnEnterListener {
         difficultySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, index: Int, id: Long) {
                 settingsRef.child("difficulty_idx").setValue(index)
-                refreshUser()
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}
@@ -109,6 +105,11 @@ class SettingsFragment : Fragment(), NavigationActivity.OnEnterListener {
             dialog.show(childFragmentManager, "ClearHistoryConfirmDialogFragment")
         }
         return view
+    }
+
+    override fun onPause() {
+        super.onPause()
+        refreshUser()
     }
 
     override fun onEnter() {

@@ -10,13 +10,13 @@ import com.example.appventure_hack_2021.R
 import com.example.appventure_hack_2021.userRef
 
 class AddFavouriteRecyclerViewAdapter(
-    private vararg val locations: Location
+    private vararg val locations: LocationData
 ): RecyclerView.Adapter<AddFavouriteRecyclerViewAdapter.ViewHolder>() {
     init {
         if (locations.isEmpty()) throw IllegalArgumentException("what even is the point")
     }
     class ViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
-        fun bind(location: Location) {
+        fun bind(location: LocationData) {
             view.findViewById<TextView>(R.id.add_favourite_location_textview).text = location.name
             view.findViewById<Button>(R.id.add_favourite_location_button).setOnClickListener {
                 userRef.child("settings/favourites").push().setValue(location)
