@@ -5,46 +5,44 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appventure_hack_2021.R
-import java.time.LocalDateTime
-import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
+import com.example.appventure_hack_2021.fragments.AddFavouriteDialogFragment
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import java.time.Duration
 
 private const val stats_id = 0
-class HistoryRecyclerViewAdapter(private val histories: List<History>, private val context: Context) : RecyclerView.Adapter<HistoryRecyclerViewAdapter.ViewHolder>()  {
+class HistoryRecyclerViewAdapter(
+    private val histories: List<History>,
+    private val context: Context,
+    private val manager: FragmentManager
+) : RecyclerView.Adapter<HistoryRecyclerViewAdapter.ViewHolder>()  {
     class ViewHolder(private val view: View, private val context: Context) : RecyclerView.ViewHolder(view) {
         fun bindStats(histories: List<History>) {
-            val offset = ZoneOffset.ofHours(context.resources.getInteger(R.integer.tz_offset))
-            val formatter = DateTimeFormatter.ofPattern("")
             view.findViewById<TextView>(R.id.content).text = context.getString(
                 R.string.history_stats_text,
                 histories.size,
                 histories.sumOf { it.totalDistance.toDouble() },
-                LocalDateTime.ofEpochSecond(
-                    histories.sumOf { it.startTime - it.endTime } * 1000,
-                    0, offset
-                ).format(formatter)
+                Duration.ofSeconds(histories.sumOf { it.startTime - it.endTime }).toFormattedString()
             )
             return
         }
-        fun bind(history: History) {
+
+        fun bind(history: History, manager: FragmentManager) {
+            view.findViewById<FloatingActionButton>(R.id.history_add_favourite_button).setOnClickListener {
+                AddFavouriteDialogFragment(history.start, history.end).show(manager, "Add Favourite Dialog")
+            }
+
             view.findViewById<TextView>(R.id.header).text = context.getString(
-                R.string.history_start_stop_text, history.startName, history.startName
+                R.string.history_start_stop_text, history.start.name, history.start.name
             )
-            val offset = ZoneOffset.ofHours(context.resources.getInteger(R.integer.tz_offset))
-            val now = LocalDateTime.now(offset)
-            val startTime = LocalDateTime.ofEpochSecond(history.startTime * 1000, 0, offset)
-            val endTime = LocalDateTime.ofEpochSecond(history.endTime * 1000, 0, offset)
-            val firstFormatter = DateTimeFormatter.ofPattern(if (now.year == startTime.year) { "d MMM" } else { "d MMM yyyy" })
-            val secondFormatter = DateTimeFormatter.ofPattern("h:mm aa")
-            val additional = if (startTime.dayOfMonth == endTime.dayOfMonth) { "" } else { "of the next day" }
+
             view.findViewById<TextView>(R.id.content).text = context.getString(
                 R.string.history_content_text,
                 history.totalDistance,
-                startTime.format(firstFormatter),
-                startTime.format(secondFormatter),
-                endTime.format(secondFormatter) + additional
+                fromStartToEndString(history.startTime.toTime(), history.endTime.toTime()),
+                Duration.ofSeconds(history.startTime - history.endTime).toFormattedString()
             )
         }
     }
@@ -63,7 +61,7 @@ class HistoryRecyclerViewAdapter(private val histories: List<History>, private v
             holder.bindStats(histories)
             return
         }
-        holder.bind(histories[position - 1])
+        holder.bind(histories[position - 1], manager)
     }
 
     override fun getItemCount(): Int = histories.size + 1

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/cardview_height"
     android:layout_margin="@dimen/margin"
-    app:cardCornerRadius="@dimen/corner_radius" >
+    app:cardCornerRadius="@dimen/corner_radius">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -31,7 +31,18 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/header"
             android:textSize="@dimen/text"
-            android:text="@string/history_content_text"/>
+            android:text="@string/history_content_text" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/history_add_favourite_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin"
+            android:clickable="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:srcCompat="@android:drawable/ic_input_add"
+            android:contentDescription="@string/history_favourite_button_description"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

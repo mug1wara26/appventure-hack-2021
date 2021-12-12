@@ -4,7 +4,9 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
-import android.location.*
+import android.location.Address
+import android.location.Geocoder
+import android.location.Location
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -13,27 +15,26 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.ImageButton
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.example.appventure_hack_2021.BuildConfig
 import com.example.appventure_hack_2021.R
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
-import java.io.IOException
-import android.widget.ArrayAdapter
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import com.example.appventure_hack_2021.BuildConfig
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.net.PlacesClient
-import kotlin.properties.Delegates
+import java.io.IOException
 
 const val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1000
 const val DEFAULT_ZOOM = 13.0F
@@ -46,6 +47,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var lastKnownLocation: Location
     private var locationPermissionGranted = false
+    private var toFocus = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -125,6 +127,11 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
         mapFragment.getMapAsync(this)
 
+        if (toFocus) {
+            toFocus = false
+            focusSearchWithContext(requireContext())
+        }
+
         return view
     }
 
@@ -136,9 +143,16 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     }
 
     fun focusSearch() {
-        // focus on the search bar
+        if (context == null) {
+            toFocus = true
+        } else {
+            focusSearchWithContext(requireContext())
+        }
+    }
+
+    private fun focusSearchWithContext(context: Context) {
         autoCompleteTextView.requestFocus()
-        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.showSoftInput(autoCompleteTextView, InputMethodManager.SHOW_IMPLICIT)
     }
 
