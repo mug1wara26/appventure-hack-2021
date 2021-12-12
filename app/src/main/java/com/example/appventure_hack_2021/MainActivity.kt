@@ -14,6 +14,7 @@ import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 
@@ -77,17 +78,19 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         Log.i("MainActivity", "onResume called $login_complete")
         if (login_complete) {
-            userRef.get().addOnSuccessListener {
-                // Check if user exists
-                if (!it.exists()) {
-                    user = User(firebaseUser.uid)
-                    userRef.setValue(user)
-                } else user = it.getValue(User::class.java)!!
+            GetDataFromRTDB(userRef, object: GetDataFromRTDB.GetDataListener{
+                override fun onSuccess(snapshot: DataSnapshot) {
+                    // Check if user exists
+                    if (!snapshot.exists()) {
+                        user = User(firebaseUser.uid)
+                        userRef.setValue(user)
+                    } else user = snapshot.getValue(User::class.java)!!
 
-                Log.i("user", user.toString())
+                    Log.i("user", user.toString())
 
-                startNavigation()
-            }
+                    startNavigation()
+                }
+            })
         }
     }
 
