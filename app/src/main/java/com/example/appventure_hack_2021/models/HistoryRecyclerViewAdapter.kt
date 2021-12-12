@@ -14,7 +14,7 @@ import java.time.Duration
 
 private const val stats_id = 0
 class HistoryRecyclerViewAdapter(
-    private val histories: List<History>,
+    var histories: List<History>,
     private val context: Context,
     private val manager: FragmentManager
 ) : RecyclerView.Adapter<HistoryRecyclerViewAdapter.ViewHolder>()  {
