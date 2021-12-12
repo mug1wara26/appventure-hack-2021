@@ -7,7 +7,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 
 fun getDataFromRTDB(databaseRef: DatabaseReference, listener: (DataSnapshot) -> Unit) {
-    databaseRef.addListenerForSingleValueEvent(object: ValueEventListener{
+    databaseRef.addListenerForSingleValueEvent(object: ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
             listener(snapshot)
         }
