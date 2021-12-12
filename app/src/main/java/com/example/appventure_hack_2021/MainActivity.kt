@@ -59,18 +59,20 @@ class MainActivity : AppCompatActivity() {
                     if(firebaseUserOrNull != null) {
                         firebaseUser = firebaseUserOrNull
                         userRef = database.child("users/${firebaseUser.uid}")
-                        database.child("users/${firebaseUser.uid}").get().addOnSuccessListener {
-                            // Check if user exists
-                            if (!it.exists()) {
-                                user = User(firebaseUser.uid)
-                                userRef.setValue(user)
+                        GetDataFromRTDB(database.child("users/${firebaseUser.uid}"), object: GetDataFromRTDB.GetDataListener {
+                            override fun onSuccess(snapshot: DataSnapshot) {
+                                // Check if user exists
+                                if (!snapshot.exists()) {
+                                    user = User(firebaseUser.uid)
+                                    userRef.setValue(user)
+                                }
+                                else user = snapshot.getValue(User::class.java)!!
+
+                                startNavigation()
+                                Log.i("user", user.toString())
                             }
-                            else user = it.getValue(User::class.java)!!
+                        }).getData()
 
-                            Log.i("user", user.toString())
-                        }
-
-                    startNavigation()
                     }
                 } else {
                     println(response?.error)
