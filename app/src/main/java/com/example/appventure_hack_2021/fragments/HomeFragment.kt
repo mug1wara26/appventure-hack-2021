@@ -121,7 +121,7 @@ class HomeFragment : Fragment() {
                     }
                     Log.i("home", "end: $end")
 
-                    holder.view.findViewById<Button>(R.id.start_daily_route).setOnClickListener {
+                    it.view.findViewById<Button>(R.id.start_daily_route).setOnClickListener {
                         mapFragment.startLocationData = start
                         mapFragment.endLocationData = end
                         mapFragment.plotRoute()
