@@ -1,6 +1,8 @@
 package com.example.appventure_hack_2021.fragments
 
+import android.location.Geocoder
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +16,10 @@ import com.example.appventure_hack_2021.models.*
 import com.google.android.gms.maps.model.LatLng
 import java.time.Duration
 import java.time.LocalDate
+import kotlin.math.PI
+import kotlin.math.cos
+import kotlin.math.sin
+import kotlin.math.sqrt
 import kotlin.random.Random
 
 class HomeFragment : Fragment() {
@@ -65,7 +71,7 @@ class HomeFragment : Fragment() {
                                         lastHistory.startTime.toTime(),
                                         lastHistory.endTime.toTime()
                                     ),
-                                    Duration.ofMillis(lastHistory.startTime - lastHistory.endTime)
+                                    Duration.ofMillis(lastHistory.endTime - lastHistory.startTime)
                                         .toFormattedString()
                                 )
                         }
@@ -76,28 +82,52 @@ class HomeFragment : Fragment() {
                     }
                 },
                 Pair(R.layout.cardview_daily_route) {
+                    Log.i("home", "calculating daily route")
                     val today = LocalDate.now(offset)
                     val generator = Random(today.dayOfMonth * 301 - today.year xor 46 + today.monthValue)
-                    if (false) {
-                        val start =
-                            ((activity as NavigationActivity).fragments[R.id.nav_map] as MapFragment)
-                                .checkLocationInCountry(
-                                    LatLng(
-                                        generator.nextDouble(
-                                            countryLatRange.start,
-                                            countryLatRange.endInclusive
-                                        ),
-                                        generator.nextDouble(
-                                            countryLngRange.start,
-                                            countryLngRange.endInclusive
-                                        )
-                                    )
+                    val mapFragment = (activity as NavigationActivity).fragments[R.id.nav_map] as MapFragment
+                    var start: LocationData? = null
+                    var end: LocationData? = null
+                    while (start == null) {
+                        start = mapFragment.checkLocationInCountry(
+                            Geocoder(context),
+                            LatLng(
+                                generator.nextDouble(
+                                    countryLatRange.start,
+                                    countryLatRange.endInclusive
+                                ),
+                                generator.nextDouble(
+                                    countryLngRange.start,
+                                    countryLngRange.endInclusive
                                 )
-                        do {
-                            val end = null
-                            break
-                        } while (end == null)
+                            )
+                        )
                     }
+                    Log.i("home", "start: $start")
+                    while (end == null) {
+                        end = mapFragment.checkLocationInCountry(
+                            Geocoder(context),
+                            LatLng(
+                                generator.nextDouble(
+                                    countryLatRange.start,
+                                    countryLatRange.endInclusive
+                                ),
+                                generator.nextDouble(
+                                    countryLngRange.start,
+                                    countryLngRange.endInclusive
+                                )
+                            )
+                        )
+                    }
+                    Log.i("home", "end: $end")
+
+                    holder.view.findViewById<Button>(R.id.start_daily_route).setOnClickListener {
+                        mapFragment.startLocationData = start
+                        mapFragment.endLocationData = end
+                        mapFragment.plotRoute()
+                        (activity as NavigationActivity).navView.selectedItemId = R.id.nav_map
+                    }
+                    Log.i("home", "daily route calculated")
                 }
             ))
         }
