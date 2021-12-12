@@ -22,7 +22,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@id/start_route_button"
         android:layout_marginBottom="20dp"
-        android:textSize="16sp"/>
+        android:textSize="16sp"
+        android:textColor="@color/black"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/start_route_button"
@@ -33,7 +34,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="50dp"/>
+        android:layout_marginBottom="25dp"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/end_route_button"
@@ -44,7 +45,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="50dp" />
+        android:layout_marginBottom="25dp" />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/map_add_favourite_button"
         android:layout_width="wrap_content"
