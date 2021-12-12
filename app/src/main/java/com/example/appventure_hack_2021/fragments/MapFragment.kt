@@ -225,8 +225,9 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         }
 
         view.findViewById<FloatingActionButton>(R.id.map_add_favourite_button).setOnClickListener {
-            val location = LocationData("your face", LatLng(0.0, 0.0))
-            // TODO: make location be the current location
+            getDeviceLocation()
+            val locationAddress: Address = Geocoder(requireContext(), Locale.getDefault()).getFromLocation(lastKnownLocation.latitude, lastKnownLocation.longitude, 1)[0]
+            val location = LocationData(locationAddress.featureName, LatLng(lastKnownLocation.latitude, lastKnownLocation.longitude))
             AddFavouriteDialogFragment(location).show(childFragmentManager, "Add Favourite Dialog")
         }
 
