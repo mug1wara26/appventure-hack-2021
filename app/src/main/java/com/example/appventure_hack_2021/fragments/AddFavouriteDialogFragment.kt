@@ -14,13 +14,14 @@ class AddFavouriteDialogFragment(
     private vararg val locations: LocationData
     ) : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return requireActivity().let {
+        return requireActivity().let { activity ->
             val view = layoutInflater.inflate(R.layout.dialog_add_favourite, null)
             view.findViewById<RecyclerView>(R.id.add_favourites_recycler_view).apply {
                 layoutManager = LinearLayoutManager(context)
-                adapter = AddFavouriteRecyclerViewAdapter(*locations)
+                adapter = AddFavouriteRecyclerViewAdapter.new(context, *locations)
             }
-            AlertDialog.Builder(it).apply {
+            AlertDialog.Builder(activity).apply {
+                setTitle(R.string.add_favourite_dialog_title)
                 setView(view)
                 setNeutralButton(R.string.done) { _, _ -> }
             }.create()

@@ -57,11 +57,16 @@
 
     <string name="history">History</string>
     <string name="history_favourite_button_description">Add To Favourites</string>
-    <string name="add_favourite_location_text">Add</string>
+
     <string name="done">Done</string>
 
     <string name="history_start_stop_text">%1$s to %2$s</string>
     <string name="history_content_text">
         Distance Cycled: %1$.2f km \nOn %2$s\nTime Spent: %3$s
     </string>
+
+    <!-- Add Favourite Dialog Strings -->
+    <string name="add_favourite_dialog_title">Add Location To Favourites</string>
+    <string name="add_favourite_text">Add</string>
+    <string name="remove_favourite_text">Remove</string>
 </resources>
